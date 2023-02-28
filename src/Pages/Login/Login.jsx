@@ -1,17 +1,18 @@
 import axios from 'axios'
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import actions from '../../Redux/actions'
 
 const Login = () => {
   const [cin, setCin] = useState('')
   const [cinError, setCinError] = useState(false)
   const [password, setPassword] = useState('')
   const [passwordError, setPasswordError] = useState(false)
-
+  const dispatch = useDispatch()
   const connect = () => {
     axios
       .post('http://127.0.0.1:5000/user/connecter', { cin, password })
       .then((response) => {
-        console.log(response.data)
         if (response.data === 'cin incorrecte') {
           setCinError(true)
           setPasswordError(false)
@@ -21,6 +22,8 @@ const Login = () => {
         } else {
           setCinError(false)
           setPasswordError(false)
+          dispatch({ type: actions.login, user: response.data })
+          localStorage.setItem('user', JSON.stringify(response.data))
         }
       })
       .catch((erreur) => {
