@@ -129,6 +129,13 @@ const Register = () => {
           type={'reset'}
           onClick={() => {
             setCin('')
+            setNom('')
+            setPrenom('')
+            setDateN('')
+            setTel('')
+            setEmail('')
+            setPassword('')
+            setRole('')
           }}
         >
           Rénisialiser

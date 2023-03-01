@@ -1,7 +1,11 @@
 import axios from 'axios'
 import React, { useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import actions from '../../Redux/actions'
+import { loginSchema } from '../../Validateurs/validateur'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { TextField } from '@mui/material'
 
 const Login = () => {
   const [cin, setCin] = useState('')
@@ -9,16 +13,21 @@ const Login = () => {
   const [password, setPassword] = useState('')
   const [passwordError, setPasswordError] = useState(false)
   const dispatch = useDispatch()
-  const connect = () => {
+  const { control, handleSubmit, reset, setError } = useForm({
+    defaultValues: {
+      cin: '',
+      password: '',
+    },
+    resolver: yupResolver(loginSchema()),
+  })
+  const connect = (data) => {
     axios
       .post('http://127.0.0.1:5000/user/connecter', { cin, password })
       .then((response) => {
         if (response.data === 'cin incorrecte') {
-          setCinError(true)
-          setPasswordError(false)
+          setError('cin', { message: 'Cin incorecte' })
         } else if (response.data === 'mot de passe incorrecte') {
-          setCinError(false)
-          setPasswordError(true)
+          setError('password', { message: 'Password incorecte' })
         } else {
           setCinError(false)
           setPasswordError(false)
@@ -35,51 +44,59 @@ const Login = () => {
     <div>
       <h1>Login</h1>
       <div>
-        <input
-          type={'number'}
-          name={'cin'}
-          value={cin}
-          onChange={(event) => {
-            setCin(event.target.value)
-          }}
-        />
-        {cinError && (
-          <span style={{ color: 'red', fontWeight: 'bolder' }}>
-            Cin incorrecte
-          </span>
-        )}
-        <br />
-        <input
-          type={'password'}
-          name={'password'}
-          value={password}
-          onChange={(event) => {
-            setPassword(event.target.value)
-          }}
-        />
-        {passwordError && (
-          <span style={{ color: 'red', fontWeight: 'bolder' }}>
-            mot de passe incorrecte
-          </span>
-        )}
-        <br />
-        <button
-          type={'reset'}
-          onClick={() => {
-            setCin('')
-            setPassword('')
-          }}
+        <form
+          onSubmit={handleSubmit(connect, (error) => {
+            console.log(error)
+          })}
         >
-          Rénisialiser
-        </button>
-        <button
-          type={'submit'}
-          onClick={() => {
-            connect()
-          }}
-        >
-          Se connecter
-        </button>
+          <Controller
+            name="cin"
+            control={control}
+            render={({ field: { value, onChange }, fieldState: { error } }) => (
+              <TextField
+                error={!!error}
+                onChange={onChange}
+                value={value}
+                label="Cin"
+                helperText={error && error.message}
+              />
+            )}
+          />
+          {cinError && (
+            <span style={{ color: 'red', fontWeight: 'bolder' }}>
+              Cin incorrecte
+            </span>
+          )}
+          <br />
+          <Controller
+            name="password"
+            control={control}
+            render={({ field: { value, onChange }, fieldState: { error } }) => (
+              <TextField
+                onChange={onChange}
+                value={value}
+                label="Password"
+                error={!!error}
+                helperText={error && error.message}
+              />
+            )}
+          />
+          {passwordError && (
+            <span style={{ color: 'red', fontWeight: 'bolder' }}>
+              mot de passe incorrecte
+            </span>
+          )}
+          <br />
+          <button
+            type={'reset'}
+            onClick={() => {
+              reset()
+            }}
+          >
+            Rénisialiser
+          </button>
+          <button type="submit">Se connecter</button>
+        </form>
       </div>
     </div>
   )
