@@ -6,13 +6,11 @@ import actions from '../../Redux/actions'
 import { loginSchema } from '../../Validateurs/validateur'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { TextField } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
-  const [cin, setCin] = useState('')
-  const [cinError, setCinError] = useState(false)
-  const [password, setPassword] = useState('')
-  const [passwordError, setPasswordError] = useState(false)
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const { control, handleSubmit, reset, setError } = useForm({
     defaultValues: {
       cin: '',
@@ -21,6 +19,7 @@ const Login = () => {
     resolver: yupResolver(loginSchema()),
   })
   const connect = (data) => {
+    const { cin, password } = data
     axios
       .post('http://127.0.0.1:5000/user/connecter', { cin, password })
       .then((response) => {
@@ -29,10 +28,9 @@ const Login = () => {
         } else if (response.data === 'mot de passe incorrecte') {
           setError('password', { message: 'Password incorecte' })
         } else {
-          setCinError(false)
-          setPasswordError(false)
           dispatch({ type: actions.login, user: response.data })
           localStorage.setItem('user', JSON.stringify(response.data))
+          navigate('/')
         }
       })
       .catch((erreur) => {
@@ -62,11 +60,7 @@ const Login = () => {
               />
             )}
           />
-          {cinError && (
-            <span style={{ color: 'red', fontWeight: 'bolder' }}>
-              Cin incorrecte
-            </span>
-          )}
+
           <br />
           <Controller
             name="password"
@@ -81,11 +75,7 @@ const Login = () => {
               />
             )}
           />
-          {passwordError && (
-            <span style={{ color: 'red', fontWeight: 'bolder' }}>
-              mot de passe incorrecte
-            </span>
-          )}
+
           <br />
           <button
             type={'reset'}
