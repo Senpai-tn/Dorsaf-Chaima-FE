@@ -4,10 +4,16 @@ import React, { useEffect, useState } from 'react'
 import AjoutCours from '../../../Components/AjoutCours/AjoutCours'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import CreateIcon from '@mui/icons-material/Create'
+import ExitToAppIcon from '@mui/icons-material/ExitToApp'
+import { useDispatch } from 'react-redux'
+import actions from '../../../Redux/actions'
+
 const Home = () => {
   const [openModal, setOpenModal] = useState(false)
   const [listCours, setListCours] = useState([])
-
+  const [type, setType] = useState('ajout')
+  const [cours, setCours] = useState(null)
+  const dispatch = useDispatch()
   const getCourses = () => {
     axios
       .get('http://127.0.0.1:5000/cours')
@@ -39,17 +45,29 @@ const Home = () => {
   }, [])
   return (
     <div>
+      <IconButton
+        onClick={() => {
+          dispatch({ type: actions.logout })
+          localStorage.setItem('user', null)
+        }}
+      >
+        <ExitToAppIcon />
+      </IconButton>
       Home Prof
       <Button
         variant="contained"
         color="success"
         onClick={() => {
+          setType('ajout')
           setOpenModal(true)
+          setCours(null)
         }}
       >
         Ajouter Cours
       </Button>
       <AjoutCours
+        cours={cours}
+        type={type}
         open={openModal}
         listCours={listCours}
         setListCours={setListCours}
@@ -67,7 +85,13 @@ const Home = () => {
             alignItems={'center'}
           >
             <Typography>{`${cours.nom}  --   ${cours.price}`}</Typography>
-            <IconButton>
+            <IconButton
+              onClick={() => {
+                setCours(cours)
+                setType('modifier')
+                setOpenModal(true)
+              }}
+            >
               <CreateIcon color="warning" />
             </IconButton>
             <IconButton

@@ -9,6 +9,9 @@ const reducer = (state = initialState, action) => {
     case actions.login: {
       return { ...state, user: action.user }
     }
+    case actions.logout: {
+      return { ...state, user: null }
+    }
     default:
       return state
   }

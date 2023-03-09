@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux'
 import actions from '../../Redux/actions'
 import { loginSchema } from '../../Validateurs/validateur'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { TextField } from '@mui/material'
+import { Stack, TextField, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
@@ -39,19 +39,26 @@ const Login = () => {
   }
 
   return (
-    <div>
-      <h1>Login</h1>
-      <div>
-        <form
-          onSubmit={handleSubmit(connect, (error) => {
-            console.log(error)
-          })}
-        >
+    <Stack spacing={2} justifyContent={'center'} height={'100%'}>
+      <Typography
+        sx={{ fontFamily: 'Poppins', fontSize: '15px', fontWeight: '700' }}
+      >
+        Se Connecter
+      </Typography>
+
+      <form
+        onSubmit={handleSubmit(connect, (error) => {
+          console.log(error)
+        })}
+      >
+        <Stack spacing={3}>
           <Controller
             name="cin"
             control={control}
             render={({ field: { value, onChange }, fieldState: { error } }) => (
               <TextField
+                sx={{ width: '215px' }}
+                size="small"
                 error={!!error}
                 onChange={onChange}
                 value={value}
@@ -61,12 +68,14 @@ const Login = () => {
             )}
           />
 
-          <br />
           <Controller
             name="password"
             control={control}
             render={({ field: { value, onChange }, fieldState: { error } }) => (
               <TextField
+                sx={{ width: '215px' }}
+                size="small"
+                type={'password'}
                 onChange={onChange}
                 value={value}
                 label="Password"
@@ -76,19 +85,24 @@ const Login = () => {
             )}
           />
 
-          <br />
-          <button
-            type={'reset'}
-            onClick={() => {
-              reset()
-            }}
+          <Stack
+            direction={'row'}
+            width={'215px'}
+            justifyContent={'space-between'}
           >
-            Rénisialiser
-          </button>
-          <button type="submit">Se connecter</button>
-        </form>
-      </div>
-    </div>
+            <button
+              type={'reset'}
+              onClick={() => {
+                reset()
+              }}
+            >
+              Rénisialiser
+            </button>
+            <button type="submit">Se connecter</button>
+          </Stack>
+        </Stack>
+      </form>
+    </Stack>
   )
 }
 
