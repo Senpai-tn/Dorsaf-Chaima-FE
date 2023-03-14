@@ -7,6 +7,7 @@ import CreateIcon from '@mui/icons-material/Create'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import { useDispatch } from 'react-redux'
 import actions from '../../../Redux/actions'
+import { useNavigate } from 'react-router-dom'
 
 const Home = () => {
   const [openModal, setOpenModal] = useState(false)
@@ -14,6 +15,8 @@ const Home = () => {
   const [type, setType] = useState('ajout')
   const [cours, setCours] = useState(null)
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+
   const getCourses = () => {
     axios
       .get('http://127.0.0.1:5000/cours')

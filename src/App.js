@@ -6,12 +6,15 @@ import HomeAdmin from './Pages/Admin/Home/Home'
 import Register from './Pages/Register/Register'
 import { useSelector } from 'react-redux'
 import Auth from './Pages/Auth/Auth'
+import CoursInfo from './Pages/Cours/CoursInfo/CoursInfo'
+import Navbar from './Components/Navbar/Navbar'
 
 function App() {
   const user = useSelector((state) => state.user)
 
   return (
     <div>
+      <Navbar />
       {user !== null ? (
         <Routes>
           {user.role === 'prof' ? (
@@ -21,6 +24,7 @@ function App() {
           ) : user.role === 'admin' ? (
             <Route path="/" element={<HomeAdmin />} />
           ) : null}
+          <Route path="/cours" element={<CoursInfo />} />
           <Route path="*" element={<h1>404 Not Found</h1>} />
         </Routes>
       ) : (

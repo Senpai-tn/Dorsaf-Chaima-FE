@@ -3,13 +3,19 @@ import React from 'react'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt'
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt'
+import { useNavigate } from 'react-router-dom'
+
 const Cours = ({ image, title, nbView, nbLike, nbDislike, price }) => {
+  const navigate = useNavigate()
   return (
     <Stack
       width={'250px'}
       height={'300px'}
       position={'relative'}
       sx={{ border: '2px solid #00000040', borderRadius: '0 0 10px 10px' }}
+      onClick={() => {
+        navigate('/cours', { state: { num: title } })
+      }}
     >
       <img height={'70%'} style={{ objectFit: 'contain' }} src={image} />
 

@@ -7,6 +7,7 @@ import { loginSchema } from '../../Validateurs/validateur'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Stack, TextField, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+import Button from '../Button/Button'
 
 const Login = () => {
   const dispatch = useDispatch()
@@ -90,15 +91,8 @@ const Login = () => {
             width={'215px'}
             justifyContent={'space-between'}
           >
-            <button
-              type={'reset'}
-              onClick={() => {
-                reset()
-              }}
-            >
-              Rénisialiser
-            </button>
-            <button type="submit">Se connecter</button>
+            <Button text={'Réinitialiser'} onClick={reset} type={'reset'} />
+            <Button text={'Se connecter'} type={'submit'} />
           </Stack>
         </Stack>
       </form>
