@@ -1,6 +1,7 @@
 import { Stack } from '@mui/material'
 import React from 'react'
 import Cours from '../../../Components/Cours/Cours'
+import socket from '../../../Socket/Socket'
 
 const Home = () => {
   return (

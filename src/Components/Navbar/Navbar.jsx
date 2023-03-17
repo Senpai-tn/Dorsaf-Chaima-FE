@@ -1,14 +1,14 @@
 import { Box, Stack } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import actions from '../../Redux/actions'
 import Button from '../Button/Button'
-
 const Navbar = () => {
   const user = useSelector((state) => state.user)
   const navigate = useNavigate()
   const dispatch = useDispatch()
+
   return (
     <Stack
       direction={'row'}
@@ -30,6 +30,7 @@ const Navbar = () => {
         width={'150px'}
         style={{ objectFit: 'contain' }}
       />
+
       <Box>
         {user === null ? (
           <Button

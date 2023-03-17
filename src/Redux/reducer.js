@@ -2,6 +2,7 @@ import actions from './actions'
 
 const initialState = {
   user: JSON.parse(localStorage.getItem('user')),
+  socketId: null,
 }
 
 const reducer = (state = initialState, action) => {
@@ -12,6 +13,8 @@ const reducer = (state = initialState, action) => {
     case actions.logout: {
       return { ...state, user: null }
     }
+    case actions.getSocketId:
+      return { ...state, socketId: action.socketId }
     default:
       return state
   }

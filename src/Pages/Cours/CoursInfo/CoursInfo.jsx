@@ -1,15 +1,21 @@
 import { Box, Stack, Typography } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Button from '../../../Components/Button/Button'
 import { Button as ButtonMUI } from '@mui/material'
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt'
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn'
+import socket from '../../../Socket/Socket'
 
 const CoursInfo = () => {
   const route = useLocation()
   const navigate = useNavigate()
 
+  useEffect(() => {
+    socket.on('event', (data) => {
+      console.log(data)
+    })
+  }, [])
   return (
     <Box>
       <ButtonMUI
@@ -94,9 +100,9 @@ const CoursInfo = () => {
         height="600px"
         src="https://www.youtube.com/embed/m1-XAOyL8kk"
         title="YouTube video player"
-        frameborder="0"
+        frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen
+        allowFullScreen
       />
     </Box>
   )
