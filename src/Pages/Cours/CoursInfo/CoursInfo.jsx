@@ -1,23 +1,83 @@
 import { Box, Stack, Typography } from '@mui/material'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import Button from '../../../Components/Button/Button'
 import { Button as ButtonMUI } from '@mui/material'
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt'
+import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt'
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn'
 import socket from '../../../Socket/Socket'
-
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+import axios from 'axios'
+import { useDispatch, useSelector } from 'react-redux'
+import actions from '../../../Redux/actions'
+import AjoutCours from '../../../Components/AjoutCours/AjoutCours'
 const CoursInfo = () => {
   const route = useLocation()
   const navigate = useNavigate()
+  const user = useSelector((state) => state.user)
+  const dispatch = useDispatch()
+  const [openModal, setOpenModal] = useState(false)
 
   useEffect(() => {
     socket.on('event', (data) => {
       console.log(data)
     })
+    axios
+      .get('http://127.0.0.1:5000/cours/' + route.state.cours._id)
+      .then((response) => {
+        localStorage.setItem('user', JSON.stringify(response.data.user))
+        user.role === 'PROF' &&
+          route.state.cours.idProf.toString() === user._id &&
+          dispatch({ type: actions.updateCours, user: response.data.user })
+      })
   }, [])
+
+  const deleteCours = () => {
+    axios
+      .delete('http://127.0.0.1:5000/cours', {
+        data: { idCours: route.state.cours._id, idProf: user._id },
+      })
+      .then((response) => {
+        dispatch({ type: actions.deleteCours, user: response.data.user })
+        localStorage.setItem('user', JSON.stringify(response.data.user))
+        navigate('/')
+      })
+      .catch((error) => {})
+  }
+
+  const interagir = (action) => {
+    axios
+      .patch('http://127.0.0.1:5000/cours', {
+        idCours: route.state.cours._id,
+        idEtudiant: user._id,
+        action,
+      })
+      .then((response) => {
+        dispatch({ type: actions.deleteCours, user: response.data.user })
+        localStorage.setItem('user', JSON.stringify(response.data.user))
+      })
+  }
+
+  const checkInteraction = () => {
+    return user.listeInteraction.find((interaction) => {
+      return interaction.idCours === route.state.cours._id
+    })
+  }
+
+  const setCours = (cours) => {
+    route.state.cours = cours
+  }
   return (
     <Box>
+      <AjoutCours
+        type={'modifier'}
+        cours={route.state.cours}
+        open={openModal}
+        setCours={setCours}
+        handleClose={() => {
+          setOpenModal(false)
+        }}
+      />
       <ButtonMUI
         variant="outlined"
         size="large"
@@ -27,6 +87,34 @@ const CoursInfo = () => {
       >
         Retour
       </ButtonMUI>
+      {user.role === 'PROF' && (
+        <>
+          <ButtonMUI
+            variant="outlined"
+            color="warning"
+            size="large"
+            startIcon={<DeleteForeverIcon />}
+            sx={{ margin: '10px 0 0 10px' }}
+            onClick={() => {
+              setOpenModal(true)
+            }}
+          >
+            Modifier ce cours
+          </ButtonMUI>
+          <ButtonMUI
+            variant="outlined"
+            color="error"
+            size="large"
+            startIcon={<DeleteForeverIcon />}
+            sx={{ margin: '10px 0 0 10px' }}
+            onClick={() => {
+              deleteCours()
+            }}
+          >
+            Supprimer ce cours
+          </ButtonMUI>
+        </>
+      )}
       <Stack
         direction={'row'}
         marginTop={'25px'}
@@ -41,7 +129,16 @@ const CoursInfo = () => {
               color: '#1212b7',
             }}
           >
-            Titre du cours
+            {route.state.cours.title}
+          </Typography>
+          <Typography
+            sx={{
+              fontWeight: '900',
+              fontSize: '40px',
+              color: '#1212b7',
+            }}
+          >
+            {route.state.cours.price}
           </Typography>
           <Typography
             sx={{
@@ -59,22 +156,59 @@ const CoursInfo = () => {
             recusandae alias maiores doloremque! Voluptates, porro quam ullam
             dolorem vitae e
           </Typography>
-          {route.state.num === 'JS' ? (
-            <Button type={'warning'} text={'Acheter ce cours'} />
-          ) : (
-            <ButtonMUI
-              variant="outlined"
-              color="warning"
-              size="large"
-              startIcon={<ThumbUpOffAltIcon />}
-            >
-              Delete
-            </ButtonMUI>
+
+          {user.role !== 'PROF' && (
+            <Stack direction={'row'} spacing={3}>
+              <ButtonMUI
+                variant="outlined"
+                color="warning"
+                size="large"
+                startIcon={<ThumbUpOffAltIcon />}
+                onClick={() => {
+                  interagir('like')
+                }}
+                disabled={
+                  checkInteraction() !== undefined &&
+                  checkInteraction().action === 'like'
+                }
+                sx={{
+                  visibility:
+                    checkInteraction() !== undefined &&
+                    checkInteraction().action === 'dislike'
+                      ? 'hidden'
+                      : 'visible',
+                }}
+              >
+                Like
+              </ButtonMUI>
+              <ButtonMUI
+                variant="outlined"
+                color="warning"
+                size="large"
+                startIcon={<ThumbDownOffAltIcon />}
+                onClick={() => {
+                  interagir('dislike')
+                }}
+                disabled={
+                  checkInteraction() !== undefined &&
+                  checkInteraction().action === 'dislike'
+                }
+                sx={{
+                  visibility:
+                    checkInteraction() !== undefined &&
+                    checkInteraction().action === 'like'
+                      ? 'hidden'
+                      : 'visible',
+                }}
+              >
+                Dislike
+              </ButtonMUI>
+            </Stack>
           )}
         </Stack>
         <Stack direction={'column'} width={'50vw'}>
           <img
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/LEGO_logo.svg/2048px-LEGO_logo.svg.png"
+            src={'http://localhost:5000/images/' + route.state.cours.image}
             width={'100%'}
             height={'90%'}
             style={{ objectFit: 'contain' }}

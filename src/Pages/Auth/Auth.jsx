@@ -1,13 +1,15 @@
 import { Box, Stack, Typography } from '@mui/material'
 import React, { useState } from 'react'
 import Login from '../../Components/Login/Login'
+import Register from '../../Components/Register/Register'
 
 const Auth = () => {
   const [actionType, setActionType] = useState('connexion')
 
   return (
     <Box
-      sx={{ bgcolor: '#E1E1E1', height: '100vh', width: '100vw' }}
+      height={'calc(100vh - 60px)'}
+      sx={{ bgcolor: '#E1E1E1' }}
       justifyContent={'center'}
       alignItems={'center'}
       display={'flex'}
@@ -47,11 +49,11 @@ const Auth = () => {
               S'inscrire
             </Typography>
           </Stack>
-          {actionType === 'connexion' ? <Login /> : null}
+          {actionType === 'connexion' ? <Login /> : <Register />}
         </Box>
         <Box
           width={'245px'}
-          height={'264px'}
+          height={'560px'}
           borderRadius="0 10px 10px 0"
           sx={{
             background:

@@ -7,9 +7,11 @@ import {
   Typography,
 } from '@mui/material'
 import axios from 'axios'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import CloseIcon from '@mui/icons-material/Close'
+import { useDispatch, useSelector } from 'react-redux'
+import actions from '../../Redux/actions'
 
 const AjoutCours = ({
   open,
@@ -18,26 +20,44 @@ const AjoutCours = ({
   setListCours,
   type,
   cours,
+  setCours,
 }) => {
-  const { handleSubmit, reset, control } = useForm({
+  const [selectedFile, setSelectedFile] = useState(null)
+  const user = useSelector((state) => state.user)
+  const dispatch = useDispatch()
+  const { handleSubmit, reset, control, register } = useForm({
     defaultValues:
       type === 'ajout'
-        ? { nom: '', price: '0' }
+        ? { title: '', price: '0', image: null }
         : type === 'modifier'
         ? {
-            nom: '',
-            price: '',
+            title: cours.title,
+            price: cours.price,
+            image: null,
           }
         : {},
   })
+  const onFileChange = (event) => {
+    setSelectedFile(event.target.files[0])
+    console.log(event.target.files[0])
+  }
 
   const AddCours = (data) => {
-    const { nom, price } = data
+    const { title, price, image } = data
+
     if (type === 'ajout') {
+      const formData = new FormData()
+      formData.append('image', selectedFile)
+      formData.append('title', title)
+      formData.append('price', parseInt(price))
+      formData.append('idProf', user._id)
+      console.log(formData.get('image'))
       axios
-        .post('http://127.0.0.1:5000/cours', { nom, price: parseInt(price) })
+        .post('http://127.0.0.1:5000/cours', formData)
         .then((response) => {
-          setListCours([...listCours, response.data])
+          setListCours([...listCours, response.data.cours])
+          dispatch({ type: actions.addCours, user: response.data.user })
+          localStorage.setItem('user', JSON.stringify(response.data.user))
           reset()
           handleClose()
         })
@@ -47,14 +67,14 @@ const AjoutCours = ({
     } else {
       axios
         .put('http://127.0.0.1:5000/cours', {
-          cours: { ...cours, nom, price: parseInt(price) },
+          title,
+          price,
+          idCours: cours._id,
         })
         .then((response) => {
-          var temporary = [...listCours]
-          temporary = temporary.map((tempCours) => {
-            return cours._id === tempCours._id ? response.data : tempCours
-          })
-          setListCours(temporary)
+          setCours(response.data.cours)
+          localStorage.setItem('user', JSON.stringify(response.data.user))
+          dispatch({ type: actions.updateCours, user: response.data.user })
           reset()
           handleClose()
         })
@@ -66,7 +86,7 @@ const AjoutCours = ({
 
   useEffect(() => {
     reset({
-      nom: type === 'modifier' ? cours.nom : '',
+      title: type === 'modifier' ? cours.title : '',
       price: type === 'modifier' ? cours.price : '',
     })
   }, [cours])
@@ -108,7 +128,7 @@ const AjoutCours = ({
         <Box justifyContent={'center'} width={'100%'}>
           <form onSubmit={handleSubmit(AddCours)}>
             <Controller
-              name="nom"
+              name="title"
               control={control}
               render={({
                 field: { value, onChange },
@@ -144,6 +164,16 @@ const AjoutCours = ({
                 />
               )}
             />
+
+            {type === 'ajout' && (
+              <input
+                type={'file'}
+                onChange={(event) => {
+                  onFileChange(event)
+                }}
+              />
+            )}
+
             <Box>
               <Button
                 variant="outlined"

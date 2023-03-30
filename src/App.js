@@ -3,6 +3,7 @@ import Login from './Components/Login/Login'
 import HomeProf from './Pages/Prof/Home/Home'
 import HomeEtudiant from './Pages/Etudiant/Home/Home'
 import HomeAdmin from './Pages/Admin/Home/Home'
+import HomeAnonyme from './Pages/Anonyme/Home/Home'
 import { useDispatch, useSelector } from 'react-redux'
 import Auth from './Pages/Auth/Auth'
 import CoursInfo from './Pages/Cours/CoursInfo/CoursInfo'
@@ -31,11 +32,11 @@ function App() {
         <>
           <Chatbot />
           <Routes>
-            {user.role === 'prof' ? (
+            {user.role === 'PROF' ? (
               <Route path="/" element={<HomeProf />} />
-            ) : user.role === 'etudiant' ? (
+            ) : user.role === 'ETUDIANT' ? (
               <Route path="/" element={<HomeEtudiant />} />
-            ) : user.role === 'admin' ? (
+            ) : user.role === 'ADMIN' ? (
               <Route path="/" element={<HomeAdmin />} />
             ) : null}
             <Route path="/cours" element={<CoursInfo />} />
@@ -44,9 +45,8 @@ function App() {
         </>
       ) : (
         <Routes>
-          <Route path="/" element={<p>Home</p>} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="*" element={<h1>404 Not Found</h1>} />
+          <Route path="/" element={<HomeAnonyme />} />
+          <Route path="*" element={<Auth />} />
         </Routes>
       )}
     </div>

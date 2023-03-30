@@ -15,7 +15,14 @@ const Navbar = () => {
       alignItems={'center'}
       justifyContent={'space-between'}
       sx={{
-        bgcolor: '#64aceb',
+        bgcolor:
+          user === null
+            ? '#325698'
+            : user.role === 'PROF'
+            ? '#1E90FF'
+            : user.role === 'ETUDIANT'
+            ? 'orange'
+            : 'black',
         height: '60px',
         width: 'calc(100vw-90px)',
         padding: '0 45px',
@@ -34,22 +41,24 @@ const Navbar = () => {
       <Box>
         {user === null ? (
           <Button
-            text={"S'inscrire"}
+            text={"S'authentifier"}
             type={'submit'}
             onClick={() => {
               navigate('/auth')
             }}
           />
         ) : (
-          <Button
-            text={'Logout'}
-            type={'delete'}
-            onClick={() => {
-              dispatch({ type: actions.logout })
-              localStorage.setItem('user', null)
-              navigate('/')
-            }}
-          />
+          <>
+            <Button
+              text={'Logout'}
+              type={'delete'}
+              onClick={() => {
+                dispatch({ type: actions.logout })
+                localStorage.setItem('user', null)
+                navigate('/')
+              }}
+            />
+          </>
         )}
       </Box>
     </Stack>

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useState } from 'react'
+import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import actions from '../../Redux/actions'
@@ -24,18 +24,12 @@ const Login = () => {
     axios
       .post('http://127.0.0.1:5000/user/connecter', { cin, password })
       .then((response) => {
-        if (response.data === 'cin incorrecte') {
-          setError('cin', { message: 'Cin incorecte' })
-        } else if (response.data === 'mot de passe incorrecte') {
-          setError('password', { message: 'Password incorecte' })
-        } else {
-          dispatch({ type: actions.login, user: response.data })
-          localStorage.setItem('user', JSON.stringify(response.data))
-          navigate('/')
-        }
+        dispatch({ type: actions.login, user: response.data })
+        localStorage.setItem('user', JSON.stringify(response.data))
+        navigate('/')
       })
       .catch((erreur) => {
-        console.log(erreur)
+        setError('cin', { message: erreur.response.data })
       })
   }
 

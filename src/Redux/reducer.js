@@ -15,6 +15,12 @@ const reducer = (state = initialState, action) => {
     }
     case actions.getSocketId:
       return { ...state, socketId: action.socketId }
+    case actions.addCours:
+      return { ...state, user: action.user }
+    case actions.updateCours:
+      return { ...state, user: action.user }
+    case actions.deleteCours:
+      return { ...state, user: action.user }
     default:
       return state
   }

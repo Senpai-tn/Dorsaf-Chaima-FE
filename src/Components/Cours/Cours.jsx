@@ -4,9 +4,11 @@ import VisibilityIcon from '@mui/icons-material/Visibility'
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt'
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
-const Cours = ({ image, title, nbView, nbLike, nbDislike, price }) => {
+const Cours = ({ cours }) => {
   const navigate = useNavigate()
+  const user = useSelector((state) => state.user)
   return (
     <Stack
       width={'250px'}
@@ -14,10 +16,14 @@ const Cours = ({ image, title, nbView, nbLike, nbDislike, price }) => {
       position={'relative'}
       sx={{ border: '2px solid #00000040', borderRadius: '0 0 10px 10px' }}
       onClick={() => {
-        navigate('/cours', { state: { num: title } })
+        navigate('/cours', { state: { cours } })
       }}
     >
-      <img height={'70%'} style={{ objectFit: 'contain' }} src={image} />
+      <img
+        height={'70%'}
+        style={{ objectFit: 'contain' }}
+        src={'http://localhost:5000/images/' + cours.image}
+      />
 
       <Typography
         margin={'10px 20px'}
@@ -30,27 +36,39 @@ const Cours = ({ image, title, nbView, nbLike, nbDislike, price }) => {
           fontWeight: '800',
         }}
       >
-        {title}
+        {cours.title}
       </Typography>
 
       <Stack direction={'row'} spacing={4} justifyContent={'center'}>
         <span style={{ display: 'flex' }}>
           <VisibilityIcon htmlColor="#ffa500ad" />
-          <Typography>{nbView}</Typography>
+          <Typography>{cours.nbView}</Typography>
         </span>
         <span style={{ display: 'flex' }}>
           <ThumbUpOffAltIcon htmlColor="#5656d9d9" />
-          <Typography>{nbLike}</Typography>
+          <Typography>
+            {
+              cours.listeInteraction.filter((item) => {
+                return item.action === 'like'
+              }).length
+            }
+          </Typography>
         </span>
         <span style={{ display: 'flex' }}>
           <ThumbDownOffAltIcon htmlColor="#f65d5ddb" />
-          <Typography>{nbDislike}</Typography>
+          <Typography>
+            {
+              cours.listeInteraction.filter((item) => {
+                return item.action === 'dislike'
+              }).length
+            }
+          </Typography>
         </span>
       </Stack>
       <div
         style={{ position: 'absolute', top: '65%', background: '#ffa500ad' }}
       >
-        {price}dt
+        {cours.price}dt
       </div>
     </Stack>
   )
