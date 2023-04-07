@@ -2,10 +2,8 @@ import {
   Box,
   Badge,
   IconButton,
-  Input,
   Modal,
   Stack,
-  TextareaAutosize,
   TextField,
   Typography,
 } from '@mui/material'
@@ -14,7 +12,6 @@ import ForumIcon from '@mui/icons-material/Forum'
 import { useForm, Controller } from 'react-hook-form'
 import socket from '../../Socket/Socket'
 import { useSelector } from 'react-redux'
-import dayjs from 'dayjs'
 import './style.css'
 import Message from '../Message/Message'
 
@@ -23,7 +20,7 @@ const Chatbot = () => {
   const [messageTemp, setMessageTemp] = useState(null)
   const [messages, setMessages] = useState([])
   const [unseenMessage, setUnseenMessage] = useState(false)
-  const { control, handleSubmit, setValue, watch } = useForm({
+  const { control } = useForm({
     defaultValues: { message: '' },
   })
   const user = useSelector((state) => state.user)
@@ -39,6 +36,7 @@ const Chatbot = () => {
     if (messageTemp !== null) {
       setMessages([...messages, messageTemp])
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messageTemp])
 
   useEffect(() => {

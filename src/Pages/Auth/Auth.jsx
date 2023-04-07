@@ -1,11 +1,24 @@
-import { Box, Stack, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import { Alert, Box, Stack, Typography } from '@mui/material'
+import React, { useEffect, useState } from 'react'
 import Login from '../../Components/Login/Login'
 import Register from '../../Components/Register/Register'
+import { useLocation } from 'react-router-dom'
+import Snackbar from '@mui/material/Snackbar'
+import { useDispatch, useSelector } from 'react-redux'
+import actions from '../../Redux/actions'
 
 const Auth = () => {
   const [actionType, setActionType] = useState('connexion')
+  const [open, setOpen] = useState(false)
+  const dispatch = useDispatch()
+  const alert = useSelector((state) => state.alert)
 
+  const route = useLocation()
+  useEffect(() => {
+    if (alert !== null) {
+      setOpen(true)
+    }
+  }, [])
   return (
     <Box
       height={'calc(100vh - 60px)'}
@@ -14,6 +27,25 @@ const Auth = () => {
       alignItems={'center'}
       display={'flex'}
     >
+      <Snackbar
+        open={open}
+        anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+        autoHideDuration={6000}
+        onClose={() => {
+          setOpen(false)
+        }}
+      >
+        <Alert
+          onClose={() => {
+            setOpen(false)
+            dispatch({ type: actions.alert, alert: null })
+          }}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
+          {alert}
+        </Alert>
+      </Snackbar>
       <Stack direction={'row'} width="490px">
         <Box width={'245px'}>
           <Stack

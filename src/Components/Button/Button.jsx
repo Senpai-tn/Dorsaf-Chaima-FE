@@ -15,7 +15,7 @@ const Button = ({ text, type: typeProps, onClick }) => {
             : typeProps === 'warning'
             ? 'orange'
             : '',
-        color: 'white',
+        color: typeProps ? 'white' : 'black',
         border: 'none',
         borderRadius: '5px',
         fontSize: '16px',

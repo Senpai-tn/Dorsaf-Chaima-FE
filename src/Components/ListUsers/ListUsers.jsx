@@ -183,7 +183,6 @@ const ListUsers = () => {
             columnVisibilityModel: {
               deleted: false,
               _id: false,
-              // blocked: false,
             },
           },
         }}

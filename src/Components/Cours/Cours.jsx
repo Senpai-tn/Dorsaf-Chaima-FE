@@ -4,11 +4,9 @@ import VisibilityIcon from '@mui/icons-material/Visibility'
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt'
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt'
 import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
 
 const Cours = ({ cours }) => {
   const navigate = useNavigate()
-  const user = useSelector((state) => state.user)
   return (
     <Stack
       width={'250px'}
@@ -20,6 +18,7 @@ const Cours = ({ cours }) => {
       }}
     >
       <img
+        alt={cours.image}
         height={'70%'}
         style={{ objectFit: 'contain' }}
         src={'http://localhost:5000/images/' + cours.image}

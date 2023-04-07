@@ -1,14 +1,18 @@
 import { Box, Stack } from '@mui/material'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import actions from '../../Redux/actions'
 import Button from '../Button/Button'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+
 const Navbar = () => {
   const user = useSelector((state) => state.user)
   const navigate = useNavigate()
   const dispatch = useDispatch()
-
+  const [anchorEl, setAnchorEl] = React.useState(null)
+  const open = Boolean(anchorEl)
   return (
     <Stack
       direction={'row'}
@@ -29,6 +33,7 @@ const Navbar = () => {
       }}
     >
       <img
+        alt="logo"
         onClick={() => {
           navigate('/')
         }}
@@ -50,14 +55,41 @@ const Navbar = () => {
         ) : (
           <>
             <Button
-              text={'Logout'}
-              type={'delete'}
-              onClick={() => {
-                dispatch({ type: actions.logout })
-                localStorage.setItem('user', null)
-                navigate('/')
+              onClick={(event) => {
+                setAnchorEl(event.currentTarget)
               }}
+              text={`${user.nom} ${user.prenom}`}
             />
+
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={() => setAnchorEl(null)}
+              MenuListProps={{
+                'aria-labelledby': 'basic-button',
+              }}
+            >
+              <MenuItem
+                onClick={() => {
+                  navigate('/Profile')
+                  setAnchorEl(null)
+                }}
+              >
+                Profile
+              </MenuItem>
+              <MenuItem
+                sx={{ color: 'red' }}
+                onClick={() => {
+                  dispatch({ type: actions.logout })
+                  localStorage.setItem('user', null)
+                  navigate('/')
+                  setAnchorEl(null)
+                }}
+              >
+                Logout
+              </MenuItem>
+            </Menu>
           </>
         )}
       </Box>

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import actions from '../../Redux/actions'
@@ -10,9 +10,10 @@ import { useNavigate } from 'react-router-dom'
 import Button from '../Button/Button'
 
 const Login = () => {
+  const [code, setCode] = useState('')
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { control, handleSubmit, reset, setError } = useForm({
+  const { control, handleSubmit, reset, setError, watch } = useForm({
     defaultValues: {
       cin: '',
       password: '',
@@ -29,9 +30,18 @@ const Login = () => {
         navigate('/')
       })
       .catch((erreur) => {
-        setError('cin', { message: erreur.response.data })
+        console.log(erreur.response.status)
+        if (erreur.response.status === 403)
+          setError('password', { message: erreur.response.data })
+        else setError('cin', { message: erreur.response.data })
       })
   }
+
+  useEffect(() => {
+    if (code !== '') {
+      navigate('/reinit', { state: { code, cin: watch('cin') } })
+    }
+  }, [code])
 
   return (
     <Stack spacing={2} justifyContent={'center'} height={'100%'}>
@@ -90,6 +100,25 @@ const Login = () => {
           </Stack>
         </Stack>
       </form>
+      <Typography
+        sx={{ color: 'blue', textDecoration: 'underline' }}
+        onClick={() => {
+          if (watch('cin') === '') {
+            setError('cin', { message: 'Cin obligatoire' })
+          } else {
+            axios
+              .post('http://127.0.0.1:5000/user', { cin: watch('cin') })
+              .then((response) => {
+                setCode(response.data)
+              })
+              .catch((erreur) => {
+                console.log(erreur)
+              })
+          }
+        }}
+      >
+        Mot de passe oublié
+      </Typography>
     </Stack>
   )
 }

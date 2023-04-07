@@ -1,5 +1,4 @@
 import { Route, Routes } from 'react-router-dom'
-import Login from './Components/Login/Login'
 import HomeProf from './Pages/Prof/Home/Home'
 import HomeEtudiant from './Pages/Etudiant/Home/Home'
 import HomeAdmin from './Pages/Admin/Home/Home'
@@ -11,8 +10,13 @@ import Navbar from './Components/Navbar/Navbar'
 import socket from './Socket/Socket'
 import actions from './Redux/actions'
 import Chatbot from './Components/Chatbot/Chatbot'
+import Profile from './Pages/Profile/Profile'
+import ReinitPasswd from './Pages/ReinitPasswd/ReinitPasswd'
+import Quiz from './Pages/Etudiant/Quiz/Quiz'
+import { useTranslation } from 'react-i18next'
 
 function App() {
+  const { t } = useTranslation(['common'])
   const user = useSelector((state) => state.user)
   const dispatch = useDispatch()
   socket.connect()
@@ -35,17 +39,24 @@ function App() {
             {user.role === 'PROF' ? (
               <Route path="/" element={<HomeProf />} />
             ) : user.role === 'ETUDIANT' ? (
-              <Route path="/" element={<HomeEtudiant />} />
+              <>
+                <Route path="/" element={<HomeEtudiant />} />
+                <Route path="/quiz" element={<Quiz />} />
+              </>
             ) : user.role === 'ADMIN' ? (
               <Route path="/" element={<HomeAdmin />} />
             ) : null}
+
             <Route path="/cours" element={<CoursInfo />} />
-            <Route path="*" element={<h1>404 Not Found</h1>} />
+            <Route path="/Profile" element={<Profile />} />
+
+            <Route path="*" element={<h1>404 Not Found {t('hello')}</h1>} />
           </Routes>
         </>
       ) : (
         <Routes>
           <Route path="/" element={<HomeAnonyme />} />
+          <Route path="/reinit" element={<ReinitPasswd />} />
           <Route path="*" element={<Auth />} />
         </Routes>
       )}

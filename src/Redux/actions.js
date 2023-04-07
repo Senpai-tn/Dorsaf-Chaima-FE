@@ -5,5 +5,6 @@ const actions = {
   addCours: 'ADD_COURS',
   updateCours: 'UPDATE_COURS',
   deleteCours: 'DELETE_COURS',
+  alert: 'ALERT',
 }
 export default actions

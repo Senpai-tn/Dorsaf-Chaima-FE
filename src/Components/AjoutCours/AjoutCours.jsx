@@ -2,7 +2,10 @@ import {
   Box,
   Button,
   IconButton,
+  MenuItem,
   Modal,
+  Select,
+  Stack,
   TextField,
   Typography,
 } from '@mui/material'
@@ -22,36 +25,53 @@ const AjoutCours = ({
   cours,
   setCours,
 }) => {
-  const [selectedFile, setSelectedFile] = useState(null)
+  const [selectedImage, setSelectedImage] = useState([])
+  const [coursFile, setCoursFile] = useState(null)
   const user = useSelector((state) => state.user)
   const dispatch = useDispatch()
-  const { handleSubmit, reset, control, register } = useForm({
+  const { handleSubmit, reset, control } = useForm({
     defaultValues:
-      type === 'ajout'
-        ? { title: '', price: '0', image: null }
-        : type === 'modifier'
+      type === 'modifier'
         ? {
             title: cours.title,
             price: cours.price,
             image: null,
           }
-        : {},
+        : {
+            title: 'sdfgdsqfsd',
+            price: '0',
+            image: null,
+            video:
+              'https://www.youtube.com/watch?v=g6x2dZsk8dE&list=RDcLWfCkpTqII&index=15',
+            matiere: '',
+          },
   })
-  const onFileChange = (event) => {
-    setSelectedFile(event.target.files[0])
-    console.log(event.target.files[0])
+
+  const onPDFChange = (event) => {
+    setCoursFile(event.target.files[0])
+  }
+  const onImageChange = (event) => {
+    setSelectedImage(event.target.files)
   }
 
   const AddCours = (data) => {
-    const { title, price, image } = data
-
+    const { title, price, video, matiere } = data
+    const idYoutube = video ? video.split('=')[1].split('&')[0] : ''
+    console.log(selectedImage)
     if (type === 'ajout') {
       const formData = new FormData()
-      formData.append('image', selectedFile)
+
       formData.append('title', title)
-      formData.append('price', parseInt(price))
+      formData.append('video', idYoutube)
+      formData.append('price', 257)
+      formData.append('matiere', matiere)
       formData.append('idProf', user._id)
-      console.log(formData.get('image'))
+      for (let index = 0; index < selectedImage.length; index++) {
+        const element = selectedImage[index]
+        formData.append('images', element)
+      }
+      formData.append('images', coursFile)
+
       axios
         .post('http://127.0.0.1:5000/cours', formData)
         .then((response) => {
@@ -98,9 +118,10 @@ const AjoutCours = ({
       hideBackdrop={true}
       sx={{
         bgcolor: 'white',
-        height: '350px',
+        height: '500px',
         width: '350px',
         position: 'absolute',
+        boxShadow: '2px 2px 20px 12px #9032329e',
         top: '50%',
         left: '50%',
         transform: 'translate(-50%,-50%)',
@@ -115,6 +136,7 @@ const AjoutCours = ({
         alignItems={'center'}
       >
         <IconButton
+          sx={{ position: 'absolute', top: '0', right: '0' }}
           onClick={() => {
             handleClose()
           }}
@@ -125,8 +147,9 @@ const AjoutCours = ({
         <Typography>
           {type === 'ajout' ? 'Ajouter' : 'Modifier'} Cours
         </Typography>
-        <Box justifyContent={'center'} width={'100%'}>
-          <form onSubmit={handleSubmit(AddCours)}>
+
+        <form onSubmit={handleSubmit(AddCours)}>
+          <Stack justifyContent={'center'} width={'100%'} spacing={1}>
             <Controller
               name="title"
               control={control}
@@ -165,17 +188,69 @@ const AjoutCours = ({
               )}
             />
 
+            <Controller
+              name="matiere"
+              control={control}
+              render={({
+                field: { value, onChange },
+                fieldState: { error },
+              }) => (
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={value}
+                  label="Age"
+                  onChange={onChange}
+                >
+                  <MenuItem value={10}>Ten</MenuItem>
+                  <MenuItem value={20}>Twenty</MenuItem>
+                  <MenuItem value={30}>Thirty</MenuItem>
+                </Select>
+              )}
+            />
+
             {type === 'ajout' && (
-              <input
-                type={'file'}
-                onChange={(event) => {
-                  onFileChange(event)
-                }}
-              />
+              <Stack>
+                <label htmlFor="coursFile">Fichier du cours</label>
+                <input
+                  id="coursFile"
+                  accept=".pdf"
+                  type={'file'}
+                  onChange={(event) => {
+                    onPDFChange(event)
+                  }}
+                />
+                <input
+                  accept="image/png, image/jpeg"
+                  type={'file'}
+                  onChange={(event) => {
+                    onImageChange(event)
+                  }}
+                />
+                <Controller
+                  name="video"
+                  control={control}
+                  render={({
+                    field: { value, onChange },
+                    fieldState: { error },
+                  }) => (
+                    <TextField
+                      value={value}
+                      onChange={onChange}
+                      error={!!error}
+                      helperText={error && error.message}
+                      id="outlined-basic"
+                      label="Video"
+                      variant="outlined"
+                    />
+                  )}
+                />
+              </Stack>
             )}
 
             <Box>
               <Button
+                type="reset"
                 variant="outlined"
                 color="warning"
                 onClick={() => {
@@ -188,8 +263,8 @@ const AjoutCours = ({
                 {type === 'ajout' ? 'Ajouter' : 'Modifier'}
               </Button>
             </Box>
-          </form>
-        </Box>
+          </Stack>
+        </form>
       </Box>
     </Modal>
   )

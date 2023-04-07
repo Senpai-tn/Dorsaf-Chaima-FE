@@ -5,12 +5,14 @@ import { Button as ButtonMUI } from '@mui/material'
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt'
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt'
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn'
-import socket from '../../../Socket/Socket'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import actions from '../../../Redux/actions'
 import AjoutCours from '../../../Components/AjoutCours/AjoutCours'
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
+import Alert from '@mui/material/Alert'
+
 const CoursInfo = () => {
   const route = useLocation()
   const navigate = useNavigate()
@@ -19,16 +21,16 @@ const CoursInfo = () => {
   const [openModal, setOpenModal] = useState(false)
 
   useEffect(() => {
-    socket.on('event', (data) => {
-      console.log(data)
-    })
     axios
       .get('http://127.0.0.1:5000/cours/' + route.state.cours._id)
       .then((response) => {
-        localStorage.setItem('user', JSON.stringify(response.data.user))
-        user.role === 'PROF' &&
-          route.state.cours.idProf.toString() === user._id &&
+        if (
+          user.role === 'PROF' &&
+          route.state.cours.idProf.toString() === user._id
+        ) {
           dispatch({ type: actions.updateCours, user: response.data.user })
+          localStorage.setItem('user', JSON.stringify(response.data.user))
+        }
       })
   }, [])
 
@@ -62,6 +64,27 @@ const CoursInfo = () => {
     return user.listeInteraction.find((interaction) => {
       return interaction.idCours === route.state.cours._id
     })
+  }
+
+  const checkAchat = () => {
+    return user.listeCoursAchete.find((achat) => {
+      return achat.cours._id === route.state.cours._id
+    })
+  }
+
+  const acheterCours = () => {
+    axios
+      .post('http://127.0.0.1:5000/etudiant/acheter_cours', {
+        idCours: route.state.cours._id,
+        idEtudiant: user._id,
+      })
+      .then((response) => {
+        dispatch({ type: actions.login, user: response.data })
+        localStorage.setItem('user', response.data)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
 
   const setCours = (cours) => {
@@ -140,74 +163,93 @@ const CoursInfo = () => {
           >
             {route.state.cours.price}
           </Typography>
-          <Typography
-            sx={{
-              fontSize: '18px',
-              color: '#000',
-              overflow: 'hidden',
-              display: '-webkit-box',
-              WebkitBoxOrient: 'vertical',
-              WebkitLineClamp: 18,
-              height: '500px',
-            }}
-          >
-            Description du cours Lorem ipsum dolor sit amet consectetur
-            adipisicing elit. Dolorum nesciunt reprehenderit autem officia
-            recusandae alias maiores doloremque! Voluptates, porro quam ullam
-            dolorem vitae e
-          </Typography>
 
           {user.role !== 'PROF' && (
-            <Stack direction={'row'} spacing={3}>
-              <ButtonMUI
-                variant="outlined"
-                color="warning"
-                size="large"
-                startIcon={<ThumbUpOffAltIcon />}
-                onClick={() => {
-                  interagir('like')
-                }}
-                disabled={
-                  checkInteraction() !== undefined &&
-                  checkInteraction().action === 'like'
-                }
-                sx={{
-                  visibility:
-                    checkInteraction() !== undefined &&
-                    checkInteraction().action === 'dislike'
-                      ? 'hidden'
-                      : 'visible',
-                }}
-              >
-                Like
-              </ButtonMUI>
-              <ButtonMUI
-                variant="outlined"
-                color="warning"
-                size="large"
-                startIcon={<ThumbDownOffAltIcon />}
-                onClick={() => {
-                  interagir('dislike')
-                }}
-                disabled={
-                  checkInteraction() !== undefined &&
-                  checkInteraction().action === 'dislike'
-                }
-                sx={{
-                  visibility:
+            <>
+              {checkAchat() ? (
+                <Alert severity="success">Vous avez acheter ce cours</Alert>
+              ) : (
+                <ButtonMUI
+                  variant="outlined"
+                  color="success"
+                  size="large"
+                  startIcon={<ShoppingCartIcon />}
+                  onClick={() => {
+                    acheterCours()
+                  }}
+                  disabled={checkAchat() !== undefined}
+                >
+                  Acheter ce cours
+                </ButtonMUI>
+              )}
+              <Stack direction={'row'} spacing={3}>
+                <ButtonMUI
+                  variant="outlined"
+                  color="warning"
+                  size="large"
+                  startIcon={<ThumbUpOffAltIcon />}
+                  onClick={() => {
+                    interagir('like')
+                  }}
+                  disabled={
                     checkInteraction() !== undefined &&
                     checkInteraction().action === 'like'
-                      ? 'hidden'
-                      : 'visible',
-                }}
-              >
-                Dislike
-              </ButtonMUI>
-            </Stack>
+                  }
+                  sx={{
+                    ':disabled': {
+                      color: 'orange',
+                    },
+                    visibility:
+                      checkInteraction() !== undefined &&
+                      checkInteraction().action === 'dislike'
+                        ? 'hidden'
+                        : 'visible',
+                  }}
+                >
+                  Like
+                </ButtonMUI>
+                <ButtonMUI
+                  variant="outlined"
+                  color="warning"
+                  size="large"
+                  startIcon={<ThumbDownOffAltIcon />}
+                  onClick={() => {
+                    interagir('dislike')
+                  }}
+                  disabled={
+                    checkInteraction() !== undefined &&
+                    checkInteraction().action === 'dislike'
+                  }
+                  sx={{
+                    ':disabled': {
+                      color: 'orange',
+                    },
+                    visibility:
+                      checkInteraction() !== undefined &&
+                      checkInteraction().action === 'like'
+                        ? 'hidden'
+                        : 'visible',
+                  }}
+                >
+                  Dislike
+                </ButtonMUI>
+              </Stack>
+            </>
           )}
+          <iframe
+            style={{ marginTop: '25px' }}
+            width="100%"
+            height="450px"
+            src={`https://www.youtube.com/embed/${route.state.cours.video}`}
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          />
         </Stack>
         <Stack direction={'column'} width={'50vw'}>
           <img
+            alt={route.state.cours.image}
             src={'http://localhost:5000/images/' + route.state.cours.image}
             width={'100%'}
             height={'90%'}
@@ -219,25 +261,33 @@ const CoursInfo = () => {
             alignItems={'center'}
             height={'10%'}
           >
-            <Typography style={{ color: 'orange', fontWeight: '700' }}>
-              Télécharger
-            </Typography>
-            <Typography style={{ color: 'orange', fontWeight: '700' }}>
-              Passer Quiz
-            </Typography>
+            {checkAchat() && (
+              <>
+                <Typography
+                  sx={{ color: 'orange', fontWeight: '700', cursor: 'pointer' }}
+                  onClick={() => {
+                    axios.get(
+                      'http://127.0.0.1:5000/pdf/' + route.state.cours.coursFile
+                    )
+                  }}
+                >
+                  Télécharger
+                </Typography>
+                <Typography
+                  sx={{ color: 'orange', fontWeight: '700', cursor: 'pointer' }}
+                  onClick={() => {
+                    navigate('/quiz', {
+                      state: { matiere: route.state.cours.matiere },
+                    })
+                  }}
+                >
+                  Passer Quiz
+                </Typography>
+              </>
+            )}
           </Stack>
         </Stack>
       </Stack>
-      <iframe
-        style={{ marginTop: '25px' }}
-        width="100%"
-        height="600px"
-        src="https://www.youtube.com/embed/m1-XAOyL8kk"
-        title="YouTube video player"
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowFullScreen
-      />
     </Box>
   )
 }

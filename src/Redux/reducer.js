@@ -3,6 +3,7 @@ import actions from './actions'
 const initialState = {
   user: JSON.parse(localStorage.getItem('user')),
   socketId: null,
+  alert: null,
 }
 
 const reducer = (state = initialState, action) => {
@@ -21,6 +22,9 @@ const reducer = (state = initialState, action) => {
       return { ...state, user: action.user }
     case actions.deleteCours:
       return { ...state, user: action.user }
+    case actions.alert: {
+      return { ...state, alert: action.alert }
+    }
     default:
       return state
   }
