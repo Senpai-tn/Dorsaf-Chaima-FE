@@ -1,0 +1,15 @@
+{
+  "theData": "{{data}} Est un champ obligatoire",
+  "cin": "Cin  est incorrect",
+  "password": "Mot de passe est incorrect",
+  "confirm password": "Votre mot de passe  incorrect realiser une autre fois",
+  "message": "hors connexion realiser l'envoi  de message",
+  "name": "Aucun nom ajouter",
+  "price": "Aucun prix ajouter",
+  "video": "No video add",
+  "file": "{{file}} Fichier n'a été pas séléctionner",
+  "datacontact": "{{contact}} ce champ est obligatoire",
+  "duration": "Aucun information ajouter",
+  "picture": "impossible de charger l'image. Touchez pour réessayer.",
+  "messageOffLine": "impossible d'actualiser le file"
+}
