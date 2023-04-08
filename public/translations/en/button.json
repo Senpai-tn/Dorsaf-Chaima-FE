@@ -1,0 +1,20 @@
+{
+  "reset": "Reset",
+  "login": "Login",
+  "sauthenticate": "Authenticate",
+  "addCourse": "Add Course",
+  "add": "Add",
+  "profile": "Profile",
+  "logout": "Logout",
+  "editProfile": "Edit Profile",
+  "download": "Download",
+  "skipQuiz": "Skip Quiz",
+  "retour": "Back",
+  "like": "Like ",
+  "dislike": "Dislike",
+  "buycourse": "Buy Course",
+  "block": "Block",
+  "unblock": "Unblock",
+  "delete": "Delete",
+  "promoteAdmin": "Promote Admin"
+}

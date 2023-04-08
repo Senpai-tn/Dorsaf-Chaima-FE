@@ -1,0 +1,20 @@
+{
+  "reset": "Rénitialiser",
+  "login": "SeConnecter",
+  "sauthentfier": "Sauthentfier",
+  "addCourses": "Ajouter Cours",
+  "add": "Ajouter",
+  "profile": "Profile",
+  "logout": "déconnexion",
+  "editProfile": "Modifier le profil",
+  "download": "Télécharger",
+  "skipQuiz": "Passer Quiz",
+  "retour": "Retour",
+  "like": "J’aime ",
+  "dislike": "J’aime Pas",
+  "buycourse": "Achter Cour",
+  "block": "Bloquer",
+  "unblock": "Débloquer",
+  "delete": "Supprimer",
+  "promoteAdmin": "Promouvoir admin"
+}
