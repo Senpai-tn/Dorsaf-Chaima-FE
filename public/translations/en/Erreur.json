@@ -1,0 +1,12 @@
+{
+  "theData": "{{data}} Is a required field",
+  "cin": "Cin is incorrect",
+  "password": "Password is incorrect",
+  "confirm password": "Your incorrect password do it again",
+  "message": "Offline  send message",
+  "name": "No name added",
+  "price": "No price add",
+  "video": "No video add",
+  "file": "{{file}} File was not selected",
+  "datacontact": "{{contact}} This field is required"
+}
