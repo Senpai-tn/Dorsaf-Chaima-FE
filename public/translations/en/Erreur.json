@@ -8,5 +8,8 @@
   "price": "No price add",
   "video": "No video add",
   "file": "{{file}} File was not selected",
-  "datacontact": "{{contact}} This field is required"
+  "datacontact": "{{contact}} This field is required",
+  "duration": "No information to add",
+  "picture": "unable to load image. Touch to try again.",
+  "messageOffLine": "unable to refresh file"
 }
