@@ -20,10 +20,6 @@ const Message = ({ message }) => {
       <Typography fontSize={'10px'}>
         {dayjs(message.date).format('YYYY-MM-DD HH:mm')}
       </Typography>
-
-      <audio autoPlay hidden>
-        <source src="not.mp3" type="audio/mpeg" />
-      </audio>
     </div>
   )
 }

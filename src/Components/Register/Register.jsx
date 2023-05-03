@@ -15,10 +15,16 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { useNavigate } from 'react-router-dom'
 import Button from '../Button/Button'
+import { useTranslation } from 'react-i18next'
+import dayjs from 'dayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers'
 
 const Register = () => {
+  const { t } = useTranslation(['content', 'button', 'Erreur'])
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { control, handleSubmit, reset, setError } = useForm({
@@ -26,7 +32,7 @@ const Register = () => {
       cin: '',
       nom: '',
       prenom: '',
-      dateN: '',
+      dateN: null,
       tel: '',
       email: '',
       password: '',
@@ -38,7 +44,7 @@ const Register = () => {
     const { cin, nom, prenom, dateN, tel, email, password, role } = data
 
     axios
-      .post('http://127.0.0.1:5000/user/inscrire', {
+      .post(process.env.REACT_APP_URL_BACKEND + 'user/inscrire', {
         cin,
         nom,
         prenom,
@@ -59,176 +65,198 @@ const Register = () => {
   }
 
   return (
-    <Stack spacing={2} justifyContent={'center'} height={'100%'}>
-      <Typography
-        sx={{ fontFamily: 'Poppins', fontSize: '15px', fontWeight: '700' }}
-      >
-        sinscrire
-      </Typography>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Stack spacing={2} justifyContent={'center'} height={'100%'}>
+        <Typography
+          sx={{ fontFamily: 'Poppins', fontSize: '19px', fontWeight: '700' }}
+        >
+          {t('button:register')}
+        </Typography>
 
-      <form
-        onSubmit={handleSubmit(connect, (error) => {
-          console.log(error)
-        })}
-      >
-        <Stack spacing={1}>
-          <Controller
-            name="cin"
-            control={control}
-            render={({ field: { value, onChange }, fieldState: { error } }) => (
-              <TextField
-                sx={{ width: '215px' }}
-                size="small"
-                onChange={onChange}
-                value={value}
-                label="Cin"
-                error={!!error}
-                helperText={error && error.message}
-              />
-            )}
-          />
+        <form
+          onSubmit={handleSubmit(connect, (error) => {
+            console.log(error)
+          })}
+        >
+          <Stack spacing={1}>
+            <Controller
+              name="cin"
+              control={control}
+              render={({
+                field: { value, onChange },
+                fieldState: { error },
+              }) => (
+                <TextField
+                  sx={{ width: '215px' }}
+                  size="small"
+                  onChange={onChange}
+                  value={value}
+                  label={t('content:cin')}
+                  error={!!error}
+                  helperText={error && error.message}
+                />
+              )}
+            />
 
-          <Controller
-            name="nom"
-            control={control}
-            render={({ field: { value, onChange }, fieldState: { error } }) => (
-              <TextField
-                sx={{ width: '215px' }}
-                size="small"
-                type={'nom'}
-                onChange={onChange}
-                value={value}
-                label="Nom"
-                error={!!error}
-                helperText={error && error.message}
-              />
-            )}
-          />
+            <Controller
+              name="nom"
+              control={control}
+              render={({
+                field: { value, onChange },
+                fieldState: { error },
+              }) => (
+                <TextField
+                  sx={{ width: '215px' }}
+                  size="small"
+                  type={'nom'}
+                  onChange={onChange}
+                  value={value}
+                  label={t('content:name')}
+                  error={!!error}
+                  helperText={error && error.message}
+                />
+              )}
+            />
 
-          <Controller
-            name="prenom"
-            control={control}
-            render={({ field: { value, onChange }, fieldState: { error } }) => (
-              <TextField
-                sx={{ width: '215px' }}
-                size="small"
-                type={'prenom'}
-                onChange={onChange}
-                value={value}
-                label="Prenom"
-                error={!!error}
-                helperText={error && error.message}
-              />
-            )}
-          />
-          <Controller
-            name="dateN"
-            control={control}
-            render={({ field: { value, onChange }, fieldState: { error } }) => (
-              <TextField
-                sx={{ width: '215px' }}
-                size="small"
-                type={'date'}
-                onChange={onChange}
-                value={value}
-                error={!!error}
-                helperText={error && error.message}
-              />
-            )}
-          />
-          <Controller
-            name="tel"
-            control={control}
-            render={({ field: { value, onChange }, fieldState: { error } }) => (
-              <TextField
-                sx={{ width: '215px' }}
-                size="small"
-                type={'tel'}
-                onChange={onChange}
-                value={value}
-                label="Tel"
-                error={!!error}
-                helperText={error && error.message}
-              />
-            )}
-          />
-          <Controller
-            name="email"
-            control={control}
-            render={({ field: { value, onChange }, fieldState: { error } }) => (
-              <TextField
-                sx={{ width: '215px' }}
-                size="small"
-                type={'email'}
-                onChange={onChange}
-                value={value}
-                label="Email"
-                error={!!error}
-                helperText={error && error.message}
-              />
-            )}
-          />
-          <Controller
-            name="password"
-            control={control}
-            render={({ field: { value, onChange }, fieldState: { error } }) => (
-              <TextField
-                sx={{ width: '215px' }}
-                size="small"
-                type={'password'}
-                onChange={onChange}
-                value={value}
-                label="Password"
-                error={!!error}
-                helperText={error && error.message}
-              />
-            )}
-          />
-          <Controller
-            name="role"
-            control={control}
-            render={({ field: { value, onChange } }) => (
-              <FormControl>
-                <FormLabel id="demo-controlled-radio-buttons-group">
-                  Gender
-                </FormLabel>
-                <RadioGroup
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                  }}
-                  aria-labelledby="demo-controlled-radio-buttons-group"
-                  name="controlled-radio-buttons-group"
+            <Controller
+              name="prenom"
+              control={control}
+              render={({
+                field: { value, onChange },
+                fieldState: { error },
+              }) => (
+                <TextField
+                  sx={{ width: '215px' }}
+                  size="small"
+                  type={'prenom'}
+                  onChange={onChange}
+                  value={value}
+                  label={t('content:lastName')}
+                  error={!!error}
+                  helperText={error && error.message}
+                />
+              )}
+            />
+            <Controller
+              name="dateN"
+              control={control}
+              render={({
+                field: { value, onChange },
+                fieldState: { error },
+              }) => (
+                <DatePicker
+                  sx={{ width: '215px' }}
                   value={value}
                   onChange={onChange}
-                >
-                  <FormControlLabel
-                    value="etudiant"
-                    control={<Radio />}
-                    label="Etudiant"
-                  />
-                  <FormControlLabel
-                    value="prof"
-                    control={<Radio />}
-                    label="Prof"
-                  />
-                </RadioGroup>
-              </FormControl>
-            )}
-          />
+                  label={t('content:dateOfBirth')}
+                  error={!!error}
+                  helperText={error && error.message}
+                />
+              )}
+            />
+            <Controller
+              name="tel"
+              control={control}
+              render={({
+                field: { value, onChange },
+                fieldState: { error },
+              }) => (
+                <TextField
+                  sx={{ width: '215px' }}
+                  size="small"
+                  type={'tel'}
+                  onChange={onChange}
+                  value={value}
+                  label={t('content:Tel')}
+                  error={!!error}
+                  helperText={error && error.message}
+                />
+              )}
+            />
+            <Controller
+              name="email"
+              control={control}
+              render={({
+                field: { value, onChange },
+                fieldState: { error },
+              }) => (
+                <TextField
+                  sx={{ width: '215px' }}
+                  size="small"
+                  type={'email'}
+                  onChange={onChange}
+                  value={value}
+                  label={t('content:email')}
+                  error={!!error}
+                  helperText={error && error.message}
+                />
+              )}
+            />
+            <Controller
+              name="password"
+              control={control}
+              render={({
+                field: { value, onChange },
+                fieldState: { error },
+              }) => (
+                <TextField
+                  sx={{ width: '215px' }}
+                  size="small"
+                  type={'password'}
+                  onChange={onChange}
+                  value={value}
+                  label={t('content:password')}
+                  error={!!error}
+                  helperText={error && error.message}
+                />
+              )}
+            />
+            <Controller
+              name="role"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <FormControl>
+                  <FormLabel id="demo-controlled-radio-buttons-group">
+                    {t('content:gender')}
+                  </FormLabel>
+                  <RadioGroup
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                    }}
+                    aria-labelledby="demo-controlled-radio-buttons-group"
+                    name="controlled-radio-buttons-group"
+                    value={value}
+                    onChange={onChange}
+                  >
+                    <FormControlLabel
+                      value="etudiant"
+                      control={<Radio />}
+                      label={t('content:etudiant')}
+                    />
+                    <FormControlLabel
+                      value="prof"
+                      control={<Radio />}
+                      label={t('content:teacher')}
+                    />
+                  </RadioGroup>
+                </FormControl>
+              )}
+            />
 
-          <Stack
-            direction={'row'}
-            width={'215px'}
-            justifyContent={'space-between'}
-          >
-            <Button text={'Réinitialiser'} onClick={reset} type={'reset'} />
-            <Button text={'Se connecter'} type={'submit'} />
+            <Stack
+              direction={'row'}
+              width={'215px'}
+              justifyContent={'space-between'}
+            >
+              <Button text={t('button:reset')} onClick={reset} type={'reset'} />
+              <Button text={t('button:register')} type={'submit'} />
+            </Stack>
           </Stack>
-        </Stack>
-      </form>
-    </Stack>
+        </form>
+      </Stack>
+    </LocalizationProvider>
   )
 }
 

@@ -29,7 +29,7 @@ const ReinitPasswd = () => {
       })
     } else {
       axios
-        .post('http://127.0.0.1:5000/user/reinitialiser', {
+        .post(process.env.REACT_APP_URL_BACKEND + 'user/reinitialiser', {
           cin: route.state.cin,
           password: newPasswd,
         })
@@ -50,7 +50,7 @@ const ReinitPasswd = () => {
       display={'flex'}
       justifyContent="center"
       alignItems={'center'}
-      height={'calc(100vh - 60px )'}
+      height={'calc(100vh - 90px )'}
     >
       {validCode === false ? (
         <Controller

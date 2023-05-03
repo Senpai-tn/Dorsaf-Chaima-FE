@@ -4,31 +4,35 @@ import axios from 'axios'
 import dayjs from 'dayjs'
 import { Button, Stack, Typography } from '@mui/material'
 import ModalBlock from '../ModalBlock/ModalBlock'
+import { useSelector } from 'react-redux'
 
 const ListUsers = () => {
   const [users, setUsers] = useState([])
   const [userId, setUserId] = useState('')
   const [role, setRole] = useState('')
   const [open, setOpen] = useState(false)
+  const user = useSelector((state) => state.user)
   useEffect(() => {
-    axios.get('http://127.0.0.1:5000/admin/users').then((response) => {
-      var array = response.data
-      array = array.map((item) => {
-        return {
-          ...item,
-          id: item._id,
-          dateN: dayjs(item.dateN).format('YYYY-MM-DD'),
-        }
-      })
+    axios
+      .get(process.env.REACT_APP_URL_BACKEND + 'admin/users')
+      .then((response) => {
+        var array = response.data
+        array = array.map((item) => {
+          return {
+            ...item,
+            id: item._id,
+            dateN: dayjs(item.dateN).format('YYYY-MM-DD'),
+          }
+        })
 
-      setUsers(array)
-    })
+        setUsers(array)
+      })
   }, [])
 
   const deleteUser = (userId, role) => {
     role !== 'ADMIN'
       ? axios
-          .delete('http://127.0.0.1:5000/admin/delete_user', {
+          .delete(process.env.REACT_APP_URL_BACKEND + 'admin/delete_user', {
             data: { userId, role },
           })
           .then((response) => {
@@ -38,7 +42,7 @@ const ListUsers = () => {
             console.log(error)
           })
       : axios
-          .delete('http://127.0.0.1:5000/admin/delete_admin', {
+          .delete(process.env.REACT_APP_URL_BACKEND + 'admin/delete_admin', {
             data: { adminId: userId },
           })
           .then((response) => {
@@ -51,7 +55,10 @@ const ListUsers = () => {
 
   const changeRole = (userId, role) => {
     axios
-      .put('http://127.0.0.1:5000/admin/change_role', { userId, role })
+      .put(process.env.REACT_APP_URL_BACKEND + 'admin/change_role', {
+        userId,
+        role,
+      })
       .then((response) => {
         setUsers(response.data)
       })
@@ -62,7 +69,7 @@ const ListUsers = () => {
 
   const debloquer = (userId, role) => {
     axios
-      .post('http://127.0.0.1:5000/admin/block', {
+      .post(process.env.REACT_APP_URL_BACKEND + 'admin/block', {
         userId,
         role,
         date: null,
@@ -102,65 +109,73 @@ const ListUsers = () => {
       headerName: 'Actions',
       width: 400,
       renderCell: (params) => {
-        return params.row.deleted !== null ? (
-          <Stack direction={'row'} spacing={3}>
-            <Typography>Deleted</Typography>
-            <Button
-              color="info"
-              variant="contained"
-              onClick={() => {
-                deleteUser(params.row._id, params.row.role)
-              }}
-            >
-              Restore
-            </Button>
-          </Stack>
-        ) : (
-          <Stack direction={'row'} spacing={1}>
-            {params.row.blocked === null ? (
-              <Button
-                color="warning"
-                variant="contained"
-                onClick={() => {
-                  setOpen(true)
-                  setRole(params.row.role)
-                  setUserId(params.row._id)
-                }}
-              >
-                Bloquer
-              </Button>
+        return params.row._id.toString() !== user._id ? (
+          params.row.role !== 'SUPER_ADMIN' ? (
+            params.row.deleted !== null ? (
+              <Stack direction={'row'} spacing={3}>
+                <Typography>Deleted</Typography>
+                <Button
+                  color="info"
+                  variant="contained"
+                  onClick={() => {
+                    deleteUser(params.row._id, params.row.role)
+                  }}
+                >
+                  Restore
+                </Button>
+              </Stack>
             ) : (
-              <Button
-                color="warning"
-                variant="contained"
-                onClick={() => {
-                  debloquer(params.row._id, params.row.role)
-                }}
-              >
-                Débloquer
-              </Button>
-            )}
-            {params.row.role === 'PROF' ? (
-              <Button
-                color="success"
-                variant="contained"
-                onClick={() => {
-                  changeRole(params.row._id, params.row.role)
-                }}
-              >
-                Promovoir Admin
-              </Button>
-            ) : null}
-            <Button
-              color="error"
-              variant="contained"
-              onClick={() => {
-                deleteUser(params.row._id, params.row.role)
-              }}
-            >
-              Delete
-            </Button>
-          </Stack>
+              <Stack direction={'row'} spacing={1}>
+                {params.row.blocked === null ? (
+                  <Button
+                    color="warning"
+                    variant="contained"
+                    onClick={() => {
+                      setOpen(true)
+                      setRole(params.row.role)
+                      setUserId(params.row._id)
+                    }}
+                  >
+                    Bloquer
+                  </Button>
+                ) : (
+                  <Button
+                    color="warning"
+                    variant="contained"
+                    onClick={() => {
+                      debloquer(params.row._id, params.row.role)
+                    }}
+                  >
+                    Débloquer
+                  </Button>
+                )}
+                {params.row.role === 'PROF' ? (
+                  <Button
+                    color="success"
+                    variant="contained"
+                    onClick={() => {
+                      changeRole(params.row._id, params.row.role)
+                    }}
+                  >
+                    Promovoir Admin
+                  </Button>
+                ) : null}
+                <Button
+                  color="error"
+                  variant="contained"
+                  onClick={() => {
+                    deleteUser(params.row._id, params.row.role)
+                  }}
+                >
+                  Delete
+                </Button>
+              </Stack>
+            )
+          ) : (
+            `You can't delete the super Admin`
+          )
+        ) : (
+          `You can't delete your accompt`
         )
       },
     },

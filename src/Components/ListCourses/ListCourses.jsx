@@ -3,36 +3,52 @@ import { DataGrid } from '@mui/x-data-grid'
 import axios from 'axios'
 import { Button, Stack, Typography } from '@mui/material'
 import dayjs from 'dayjs'
+import Swal from 'sweetalert2'
 
 const ListCourses = () => {
   const [courses, setCourses] = useState([])
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:5000/admin/courses').then((response) => {
-      var array = response.data
-      array = array.map((item) => {
-        return {
-          ...item,
-          id: item._id,
-          deletedAt: item.deletedAt
-            ? dayjs(item.deletedAt).format('YYYY-MM-DD HH:mm')
-            : null,
-        }
-      })
+    axios
+      .get(process.env.REACT_APP_URL_BACKEND + 'admin/courses')
+      .then((response) => {
+        var array = response.data
+        array = array.map((item) => {
+          return {
+            ...item,
+            id: item._id,
+            deletedAt: item.deletedAt
+              ? dayjs(item.deletedAt).format('YYYY-MM-DD HH:mm')
+              : null,
+          }
+        })
 
-      setCourses(array)
-    })
+        setCourses(array)
+      })
   }, [])
 
-  const restoreCours = (idCours) => {
-    axios
-      .put('http://127.0.0.1:5000/admin/restore_cours', {
-        idCours,
-      })
-      .then((response) => {
-        console.log(response.data)
-        setCourses(response.data)
-      })
+  const restoreCours = (cours) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      icon: cours.deletedAt === null ? 'error' : 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: `Yes, ${
+        cours.deletedAt === null ? 'delete' : 'restore'
+      } it!`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .put(process.env.REACT_APP_URL_BACKEND + 'admin/restore_cours', {
+            idCours: cours._id,
+          })
+          .then((response) => {
+            console.log(response.data)
+            setCourses(response.data)
+          })
+      }
+    })
   }
 
   const columns = [
@@ -57,7 +73,7 @@ const ListCourses = () => {
               color="info"
               variant="contained"
               onClick={() => {
-                restoreCours(params.row._id)
+                restoreCours(params.row)
               }}
             >
               Restore
@@ -69,7 +85,7 @@ const ListCourses = () => {
               color="error"
               variant="contained"
               onClick={() => {
-                restoreCours(params.row._id)
+                restoreCours(params.row)
               }}
             >
               Delete
@@ -84,6 +100,7 @@ const ListCourses = () => {
     <div style={{ width: '100%' }}>
       <DataGrid
         rows={courses}
+        getRowId={(row) => row._id}
         columns={columns}
         initialState={{
           columns: {

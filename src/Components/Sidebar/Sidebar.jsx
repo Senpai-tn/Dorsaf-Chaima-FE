@@ -1,11 +1,14 @@
 import { Stack, Typography } from '@mui/material'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 
 const Sidebar = ({ cible, setCible }) => {
+  const { t } = useTranslation(['content'])
   return (
     <Stack
       width={'200px'}
-      minHeight={'calc(100vh - 60px)'}
+      minWidth={'200px'}
+      minHeight={'calc(100vh - 90px)'}
       sx={{
         bgcolor: 'black',
         color: 'white',
@@ -17,17 +20,24 @@ const Sidebar = ({ cible, setCible }) => {
     >
       <Typography
         onClick={() => {
+          setCible('stat')
+        }}
+      >
+        {t('stat')}
+      </Typography>
+      <Typography
+        onClick={() => {
           setCible('users')
         }}
       >
-        Users
+        {t('users')}
       </Typography>
       <Typography
         onClick={() => {
           setCible('courses')
         }}
       >
-        Courses
+        {t('courses')}
       </Typography>
     </Stack>
   )

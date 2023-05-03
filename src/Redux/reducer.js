@@ -4,6 +4,7 @@ const initialState = {
   user: JSON.parse(localStorage.getItem('user')),
   socketId: null,
   alert: null,
+  matiere: '',
 }
 
 const reducer = (state = initialState, action) => {
@@ -25,6 +26,8 @@ const reducer = (state = initialState, action) => {
     case actions.alert: {
       return { ...state, alert: action.alert }
     }
+    case actions.search_cours:
+      return { ...state, matiere: action.matiere }
     default:
       return state
   }

@@ -1,6 +1,7 @@
 {
   "reset": "Reset",
   "login": "Login",
+  "register": "Register",
   "sauthenticate": "Authenticate",
   "addCourse": "Add Course",
   "add": "Add",
@@ -8,7 +9,7 @@
   "logout": "Logout",
   "editProfile": "Edit Profile",
   "download": "Download",
-  "skipQuiz": "Skip Quiz",
+  "passQuiz": "Pass Quiz",
   "retour": "Back",
   "like": "Like ",
   "dislike": "Dislike",
