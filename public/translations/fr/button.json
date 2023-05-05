@@ -16,5 +16,6 @@
   "block": "Bloquer",
   "unblock": "Débloquer",
   "delete": "Supprimer",
-  "promoteAdmin": "Promouvoir admin"
+  "promoteAdmin": "Promouvoir admin",
+  "restore":"Restaurer"
 }
