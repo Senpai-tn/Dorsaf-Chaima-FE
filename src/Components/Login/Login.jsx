@@ -8,9 +8,10 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { Stack, TextField, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import Button from '../Button/Button'
+import { useTranslation } from 'react-i18next'
 
 const Login = () => {
-  const [code, setCode] = useState('')
+  const { t } = useTranslation(['button', 'content', 'Erreur'])
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { control, handleSubmit, reset, setError, watch } = useForm({
@@ -20,17 +21,21 @@ const Login = () => {
     },
     resolver: yupResolver(loginSchema()),
   })
+  const [code, setCode] = useState(null)
+
   const connect = (data) => {
     const { cin, password } = data
     axios
-      .post('http://127.0.0.1:5000/user/connecter', { cin, password })
+      .post(process.env.REACT_APP_URL_BACKEND + 'user/connecter', {
+        cin,
+        password,
+      })
       .then((response) => {
         dispatch({ type: actions.login, user: response.data })
         localStorage.setItem('user', JSON.stringify(response.data))
         navigate('/')
       })
       .catch((erreur) => {
-        console.log(erreur.response.status)
         if (erreur.response.status === 403)
           setError('password', { message: erreur.response.data })
         else setError('cin', { message: erreur.response.data })
@@ -38,19 +43,36 @@ const Login = () => {
   }
 
   useEffect(() => {
-    if (code !== '') {
+    if (code !== null) {
       navigate('/reinit', { state: { code, cin: watch('cin') } })
     }
+    return () => {
+      setCode(null)
+    }
   }, [code])
+
+  const handleForgotPWD = () => {
+    if (watch('cin') === '') {
+      setError('cin', { message: 'Cin obligatoire' })
+    } else {
+      axios
+        .post(process.env.REACT_APP_URL_BACKEND + 'user', { cin: watch('cin') })
+        .then((response) => {
+          setCode(response.data)
+        })
+        .catch((erreur) => {
+          console.log(erreur)
+        })
+    }
+  }
 
   return (
     <Stack spacing={2} justifyContent={'center'} height={'100%'}>
       <Typography
-        sx={{ fontFamily: 'Poppins', fontSize: '15px', fontWeight: '700' }}
+        sx={{ fontFamily: 'Poppins', fontSize: '19px', fontWeight: '700' }}
       >
-        Se Connecter
+        {t('button:login')}
       </Typography>
-
       <form
         onSubmit={handleSubmit(connect, (error) => {
           console.log(error)
@@ -67,7 +89,7 @@ const Login = () => {
                 error={!!error}
                 onChange={onChange}
                 value={value}
-                label="Cin"
+                label={t('content:cin')}
                 helperText={error && error.message}
               />
             )}
@@ -83,7 +105,7 @@ const Login = () => {
                 type={'password'}
                 onChange={onChange}
                 value={value}
-                label="Password"
+                label={t('content:password')}
                 error={!!error}
                 helperText={error && error.message}
               />
@@ -95,29 +117,16 @@ const Login = () => {
             width={'215px'}
             justifyContent={'space-between'}
           >
-            <Button text={'Réinitialiser'} onClick={reset} type={'reset'} />
-            <Button text={'Se connecter'} type={'submit'} />
+            <Button text={t('button:reset')} onClick={reset} type={'reset'} />
+            <Button text={t('button:login')} type={'submit'} />
           </Stack>
         </Stack>
       </form>
       <Typography
         sx={{ color: 'blue', textDecoration: 'underline' }}
-        onClick={() => {
-          if (watch('cin') === '') {
-            setError('cin', { message: 'Cin obligatoire' })
-          } else {
-            axios
-              .post('http://127.0.0.1:5000/user', { cin: watch('cin') })
-              .then((response) => {
-                setCode(response.data)
-              })
-              .catch((erreur) => {
-                console.log(erreur)
-              })
-          }
-        }}
+        onClick={() => handleForgotPWD()}
       >
-        Mot de passe oublié
+        {t('content:forgotYourPassword')}
       </Typography>
     </Stack>
   )

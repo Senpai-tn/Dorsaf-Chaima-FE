@@ -3,9 +3,10 @@ import React, { useState } from 'react'
 import ListCourses from '../../../Components/ListCourses/ListCourses'
 import ListUsers from '../../../Components/ListUsers/ListUsers'
 import Sidebar from '../../../Components/Sidebar/Sidebar'
+import Stat from '../../../Components/Stat/Stat'
 
 const Home = () => {
-  const [cible, setCible] = useState('users')
+  const [cible, setCible] = useState('stat')
   return (
     <Box display={'flex'}>
       <Sidebar setCible={setCible} />
@@ -13,7 +14,9 @@ const Home = () => {
         <ListUsers />
       ) : cible === 'courses' ? (
         <ListCourses />
-      ) : null}
+      ) : (
+        <Stat />
+      )}
     </Box>
   )
 }

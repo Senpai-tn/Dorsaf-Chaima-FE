@@ -12,6 +12,18 @@ const Home = () => {
 
   return (
     <Box>
+      <AjoutCours
+        listCours={listCours}
+        setListCours={setListCours}
+        type={'ajout'}
+        cours={cours}
+        open={openModal}
+        setCours={setCours}
+        handleClose={() => {
+          setOpenModal(false)
+        }}
+      />
+
       <Button
         variant="contained"
         color="success"
@@ -22,16 +34,6 @@ const Home = () => {
       >
         Ajouter Cours
       </Button>
-      <AjoutCours
-        type={'ajout'}
-        cours={cours}
-        open={openModal}
-        listCours={listCours}
-        setListCours={setListCours}
-        handleClose={() => {
-          setOpenModal(false)
-        }}
-      />
 
       <Stack
         direction={'row'}

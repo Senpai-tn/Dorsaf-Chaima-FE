@@ -2,18 +2,17 @@ import { Alert, Box, Stack, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import Login from '../../Components/Login/Login'
 import Register from '../../Components/Register/Register'
-import { useLocation } from 'react-router-dom'
 import Snackbar from '@mui/material/Snackbar'
 import { useDispatch, useSelector } from 'react-redux'
 import actions from '../../Redux/actions'
+import { useTranslation } from 'react-i18next'
 
 const Auth = () => {
   const [actionType, setActionType] = useState('connexion')
   const [open, setOpen] = useState(false)
   const dispatch = useDispatch()
   const alert = useSelector((state) => state.alert)
-
-  const route = useLocation()
+  const { t } = useTranslation(['button,content'])
   useEffect(() => {
     if (alert !== null) {
       setOpen(true)
@@ -21,7 +20,7 @@ const Auth = () => {
   }, [])
   return (
     <Box
-      height={'calc(100vh - 60px)'}
+      height={'calc(100vh - 90px)'}
       sx={{ bgcolor: '#E1E1E1' }}
       justifyContent={'center'}
       alignItems={'center'}
@@ -65,7 +64,7 @@ const Auth = () => {
                 setActionType('connexion')
               }}
             >
-              Connecter
+              {t('button:login')}
             </Typography>
             <Typography
               sx={{
@@ -78,14 +77,14 @@ const Auth = () => {
                 setActionType('inscrire')
               }}
             >
-              S'inscrire
+              {t('button:register')}
             </Typography>
           </Stack>
           {actionType === 'connexion' ? <Login /> : <Register />}
         </Box>
         <Box
           width={'245px'}
-          height={'560px'}
+          height={'590px'}
           borderRadius="0 10px 10px 0"
           sx={{
             background:

@@ -37,7 +37,18 @@ const Cours = ({ cours }) => {
       >
         {cours.title}
       </Typography>
-
+      <Typography
+        margin={'0 20px'}
+        sx={{
+          overflow: 'hidden',
+          display: '-webkit-box',
+          WebkitBoxOrient: 'vertical',
+          WebkitLineClamp: 2,
+          height: '50px',
+        }}
+      >
+        {cours.matiere}
+      </Typography>
       <Stack direction={'row'} spacing={4} justifyContent={'center'}>
         <span style={{ display: 'flex' }}>
           <VisibilityIcon htmlColor="#ffa500ad" />
@@ -67,7 +78,7 @@ const Cours = ({ cours }) => {
       <div
         style={{ position: 'absolute', top: '65%', background: '#ffa500ad' }}
       >
-        {cours.price}dt
+        {cours.price} TND
       </div>
     </Stack>
   )

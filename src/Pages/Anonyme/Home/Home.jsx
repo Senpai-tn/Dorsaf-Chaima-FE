@@ -10,7 +10,7 @@ const Home = () => {
 
   const getCours = () => {
     axios
-      .get('http://127.0.0.1:5000/cours')
+      .get(process.env.REACT_APP_URL_BACKEND + 'cours')
       .then((response) => {
         setCourses(response.data)
       })

@@ -4,8 +4,10 @@ import { Controller, useForm } from 'react-hook-form'
 import CloseIcon from '@mui/icons-material/Close'
 import dayjs from 'dayjs'
 import axios from 'axios'
+import { useTranslation } from 'react-i18next'
 
 const ModalBlock = ({ open, handleClose, userId, role, setUsers }) => {
+  const { t } = useTranslation(['button'])
   const { control, handleSubmit, reset } = useForm({
     defaultValues: { duree: 0 },
   })
@@ -13,7 +15,7 @@ const ModalBlock = ({ open, handleClose, userId, role, setUsers }) => {
   const blockUser = (data) => {
     const { duree } = data
     axios
-      .post('http://127.0.0.1:5000/admin/block', {
+      .post(process.env.REACT_APP_URL_BACKEND + 'admin/block', {
         userId,
         date: dayjs().add(parseInt(duree), 'days'),
         role,
@@ -95,10 +97,10 @@ const ModalBlock = ({ open, handleClose, userId, role, setUsers }) => {
                   reset()
                 }}
               >
-                Reset
+                {t('buttin:reset')}
               </Button>
               <Button variant="outlined" color="success" type={'submit'}>
-                Bloquer
+                {t('buttin:block')}
               </Button>
             </Box>
           </form>

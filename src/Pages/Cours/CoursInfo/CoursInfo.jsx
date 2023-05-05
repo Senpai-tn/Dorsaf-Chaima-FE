@@ -12,6 +12,8 @@ import actions from '../../../Redux/actions'
 import AjoutCours from '../../../Components/AjoutCours/AjoutCours'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import Alert from '@mui/material/Alert'
+import { useTranslation } from 'react-i18next'
+import Swal from 'sweetalert2'
 
 const CoursInfo = () => {
   const route = useLocation()
@@ -19,10 +21,10 @@ const CoursInfo = () => {
   const user = useSelector((state) => state.user)
   const dispatch = useDispatch()
   const [openModal, setOpenModal] = useState(false)
-
+  const { t } = useTranslation(['button', 'content', 'Erreur'])
   useEffect(() => {
     axios
-      .get('http://127.0.0.1:5000/cours/' + route.state.cours._id)
+      .get(process.env.REACT_APP_URL_BACKEND + 'cours/' + route.state.cours._id)
       .then((response) => {
         if (
           user.role === 'PROF' &&
@@ -35,21 +37,34 @@ const CoursInfo = () => {
   }, [])
 
   const deleteCours = () => {
-    axios
-      .delete('http://127.0.0.1:5000/cours', {
-        data: { idCours: route.state.cours._id, idProf: user._id },
-      })
-      .then((response) => {
-        dispatch({ type: actions.deleteCours, user: response.data.user })
-        localStorage.setItem('user', JSON.stringify(response.data.user))
-        navigate('/')
-      })
-      .catch((error) => {})
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(process.env.REACT_APP_URL_BACKEND + 'cours', {
+            data: { idCours: route.state.cours._id, idProf: user._id },
+          })
+          .then((response) => {
+            dispatch({ type: actions.deleteCours, user: response.data.user })
+            localStorage.setItem('user', JSON.stringify(response.data.user))
+            Swal.fire('Deleted!', 'Your cours has been deleted.', 'success')
+            navigate('/')
+          })
+          .catch((error) => {})
+      }
+    })
   }
 
   const interagir = (action) => {
     axios
-      .patch('http://127.0.0.1:5000/cours', {
+      .patch(process.env.REACT_APP_URL_BACKEND + 'cours', {
         idCours: route.state.cours._id,
         idEtudiant: user._id,
         action,
@@ -62,25 +77,27 @@ const CoursInfo = () => {
 
   const checkInteraction = () => {
     return user.listeInteraction.find((interaction) => {
-      return interaction.idCours === route.state.cours._id
+      return interaction.cours._id === route.state.cours._id
     })
   }
 
   const checkAchat = () => {
-    return user.listeCoursAchete.find((achat) => {
-      return achat.cours._id === route.state.cours._id
-    })
+    return (
+      user.listeCoursAchete.find((achat) => {
+        return achat.cours._id === route.state.cours._id
+      }) || route.state.cours.price === 0
+    )
   }
 
   const acheterCours = () => {
     axios
-      .post('http://127.0.0.1:5000/etudiant/acheter_cours', {
+      .post(process.env.REACT_APP_URL_BACKEND + 'etudiant/acheter_cours', {
         idCours: route.state.cours._id,
         idEtudiant: user._id,
       })
       .then((response) => {
         dispatch({ type: actions.login, user: response.data })
-        localStorage.setItem('user', response.data)
+        localStorage.setItem('user', JSON.stringify(response.data))
       })
       .catch((error) => {
         console.log(error)
@@ -108,7 +125,7 @@ const CoursInfo = () => {
         sx={{ margin: '10px 0 0 10px' }}
         onClick={() => navigate('/')}
       >
-        Retour
+        {t('button:retour')}
       </ButtonMUI>
       {user.role === 'PROF' && (
         <>
@@ -122,7 +139,7 @@ const CoursInfo = () => {
               setOpenModal(true)
             }}
           >
-            Modifier ce cours
+            {t('button:editCourse')}
           </ButtonMUI>
           <ButtonMUI
             variant="outlined"
@@ -134,7 +151,7 @@ const CoursInfo = () => {
               deleteCours()
             }}
           >
-            Supprimer ce cours
+            {t('button:deleteCourse')}
           </ButtonMUI>
         </>
       )}
@@ -145,29 +162,36 @@ const CoursInfo = () => {
         height={'600px'}
       >
         <Stack direction={'column'} width={'50vw'}>
-          <Typography
-            sx={{
-              fontWeight: '900',
-              fontSize: '40px',
-              color: '#1212b7',
-            }}
-          >
-            {route.state.cours.title}
-          </Typography>
-          <Typography
-            sx={{
-              fontWeight: '900',
-              fontSize: '40px',
-              color: '#1212b7',
-            }}
-          >
-            {route.state.cours.price}
-          </Typography>
+          <Box display={'flex'} justifyContent={'space-between'}>
+            <Typography
+              sx={{
+                fontWeight: '900',
+                fontSize: '40px',
+                color: '#1212b7',
+              }}
+            >
+              {route.state.cours.title}
+            </Typography>
+            <Typography
+              sx={{
+                fontWeight: '900',
+                fontSize: '40px',
+                color: '#1212b7',
+              }}
+            >
+              {route.state.cours.price}
+              <sup style={{ fontSize: '10px', fontWeight: '500' }}>TND</sup>
+            </Typography>
+          </Box>
 
           {user.role !== 'PROF' && (
             <>
-              {checkAchat() ? (
-                <Alert severity="success">Vous avez acheter ce cours</Alert>
+              {route.state.cours.price === 0 ? (
+                <Alert severity="success">{t('content:thisCoursIsFree')}</Alert>
+              ) : route.state.cours.price > 0 && checkAchat() ? (
+                <Alert severity="success">
+                  {t('content:youHavePurchasedThisCourse')}
+                </Alert>
               ) : (
                 <ButtonMUI
                   variant="outlined"
@@ -177,9 +201,9 @@ const CoursInfo = () => {
                   onClick={() => {
                     acheterCours()
                   }}
-                  disabled={checkAchat() !== undefined}
+                  disabled={checkAchat() !== false}
                 >
-                  Acheter ce cours
+                  {t('button:buycourse')}
                 </ButtonMUI>
               )}
               <Stack direction={'row'} spacing={3}>
@@ -206,7 +230,7 @@ const CoursInfo = () => {
                         : 'visible',
                   }}
                 >
-                  Like
+                  {t('button:like')}
                 </ButtonMUI>
                 <ButtonMUI
                   variant="outlined"
@@ -231,7 +255,7 @@ const CoursInfo = () => {
                         : 'visible',
                   }}
                 >
-                  Dislike
+                  {t('button:dislike')}
                 </ButtonMUI>
               </Stack>
             </>
@@ -267,11 +291,13 @@ const CoursInfo = () => {
                   sx={{ color: 'orange', fontWeight: '700', cursor: 'pointer' }}
                   onClick={() => {
                     axios.get(
-                      'http://127.0.0.1:5000/pdf/' + route.state.cours.coursFile
+                      process.env.REACT_APP_URL_BACKEND +
+                        'pdf/' +
+                        route.state.cours.coursFile
                     )
                   }}
                 >
-                  Télécharger
+                  {t('button:download')}
                 </Typography>
                 <Typography
                   sx={{ color: 'orange', fontWeight: '700', cursor: 'pointer' }}
@@ -281,7 +307,7 @@ const CoursInfo = () => {
                     })
                   }}
                 >
-                  Passer Quiz
+                  {t('button:passQuiz')}
                 </Typography>
               </>
             )}

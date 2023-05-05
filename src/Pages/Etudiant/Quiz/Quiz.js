@@ -14,8 +14,8 @@ function Quiz() {
   var navigate = useNavigate()
   const matiere = route.state.matiere
   const [questions, setQuestion] = useState([])
-  const [minutes, setMinutes] = useState(0)
-  const [seconds, setSeconds] = useState(30)
+  const [minutes, setMinutes] = useState(2)
+  const [seconds, setSeconds] = useState(0)
   const [submited, setSubmited] = useState(false)
   const [modalIsOpen, setIsOpen] = useState(false)
   const [message, setMessage] = useState('')
@@ -78,7 +78,7 @@ function Quiz() {
 
   useEffect(() => {
     axios
-      .get('http://127.0.0.1:5000/quiz/' + matiere)
+      .get(process.env.REACT_APP_URL_BACKEND + 'quiz/' + matiere)
       .then((res) => {
         setQuestion(res.data.questions)
       })
