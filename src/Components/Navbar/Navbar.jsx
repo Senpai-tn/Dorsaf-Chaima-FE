@@ -113,6 +113,7 @@ const Navbar = () => {
         ) : (
           <>
             <Button
+              type={'reset'}
               onClick={(event) => {
                 setAnchorEl(event.currentTarget)
               }}

@@ -1,21 +1,21 @@
 import React from 'react'
 
-const Button = ({ text, type, variant, onClick }) => {
+const Button = ({ text, type: typeProps, onClick }) => {
   return (
     <button
       style={{
         height: '57px',
         backgroundColor:
-          variant === 'submit'
+          typeProps === 'submit'
             ? 'purple'
-            : variant === 'reset'
+            : typeProps === 'reset'
             ? 'grey'
-            : variant === 'delete'
+            : typeProps === 'delete'
             ? 'red'
-            : variant === 'warning'
+            : typeProps === 'warning'
             ? 'orange'
             : '',
-        color: variant ? 'white' : 'black',
+        color: 'white',
         border: 'none',
         borderRadius: '5px',
         fontSize: '16px',
@@ -23,31 +23,29 @@ const Button = ({ text, type, variant, onClick }) => {
         cursor: 'pointer',
         transition: 'background-color 0.5s ease',
       }}
-      type={
-        type === 'reset' ? 'reset' : type === 'submit' ? 'submit' : 'button'
-      }
+      type={typeProps === 'reset' ? 'reset' : 'submit'}
       onClick={onClick}
       onMouseEnter={(e) => {
         e.target.style.backgroundColor =
-          variant === 'reset'
+          typeProps === 'reset'
             ? '#80808078'
-            : variant === 'submit'
+            : typeProps === 'submit'
             ? 'violet'
-            : variant === 'delete'
+            : typeProps === 'delete'
             ? '#ff00007a'
-            : variant === 'warning'
+            : typeProps === 'warning'
             ? '#ffc75fe6'
             : ''
       }}
       onMouseLeave={(e) => {
         e.target.style.backgroundColor =
-          variant === 'submit'
+          typeProps === 'submit'
             ? 'purple'
-            : variant === 'reset'
+            : typeProps === 'reset'
             ? 'grey'
-            : variant === 'delete'
+            : typeProps === 'delete'
             ? 'red'
-            : variant === 'warning'
+            : typeProps === 'warning'
             ? 'orange'
             : ''
       }}

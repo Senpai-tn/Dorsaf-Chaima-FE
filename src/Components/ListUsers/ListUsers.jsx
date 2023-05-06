@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 import { Button, Stack, Typography } from '@mui/material'
 import ModalBlock from '../ModalBlock/ModalBlock'
 import { useSelector } from 'react-redux'
+import Swal from 'sweetalert2'
 
 const ListUsers = () => {
   const [users, setUsers] = useState([])
@@ -29,28 +30,44 @@ const ListUsers = () => {
       })
   }, [])
 
-  const deleteUser = (userId, role) => {
-    role !== 'ADMIN'
-      ? axios
-          .delete(process.env.REACT_APP_URL_BACKEND + 'admin/delete_user', {
-            data: { userId, role },
-          })
-          .then((response) => {
-            setUsers(response.data)
-          })
-          .catch((error) => {
-            console.log(error)
-          })
-      : axios
-          .delete(process.env.REACT_APP_URL_BACKEND + 'admin/delete_admin', {
-            data: { adminId: userId },
-          })
-          .then((response) => {
-            setUsers(response.data)
-          })
-          .catch((error) => {
-            console.log(error)
-          })
+  const deleteUser = (user, role) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      icon: user.deleted === null ? 'error' : 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: `Yes, ${
+        user.deleted === null ? 'delete' : 'restore'
+      } it!`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        role !== 'ADMIN'
+          ? axios
+              .delete(process.env.REACT_APP_URL_BACKEND + 'admin/delete_user', {
+                data: { userId: user._id, role },
+              })
+              .then((response) => {
+                setUsers(response.data)
+              })
+              .catch((error) => {
+                console.log(error)
+              })
+          : axios
+              .delete(
+                process.env.REACT_APP_URL_BACKEND + 'admin/delete_admin',
+                {
+                  data: { adminId: user._id },
+                }
+              )
+              .then((response) => {
+                setUsers(response.data)
+              })
+              .catch((error) => {
+                console.log(error)
+              })
+      }
+    })
   }
 
   const changeRole = (userId, role) => {
@@ -84,7 +101,7 @@ const ListUsers = () => {
     { field: 'cin', headerName: 'Cin' },
     { field: 'nom', headerName: 'Nom' },
     { field: 'prenom', headerName: 'Prénom' },
-    { field: 'role', headerName: 'Role' },
+    { field: 'role', headerName: 'Role', width: 200 },
     {
       field: 'blocked',
       headerName: 'blocked',
@@ -101,9 +118,14 @@ const ListUsers = () => {
     },
     {
       field: 'deleted',
-      headerName: 'Role',
+      headerName: 'Deleted At',
+      width: 250,
+      renderCell: (params) => {
+        return params.row.deleted !== null
+          ? dayjs(params.row.deleted).format('YYYY-MM-DD HH:mm')
+          : ''
+      },
     },
-
     {
       field: 'actions',
       headerName: 'Actions',
@@ -118,7 +140,7 @@ const ListUsers = () => {
                   color="info"
                   variant="contained"
                   onClick={() => {
-                    deleteUser(params.row._id, params.row.role)
+                    deleteUser(params.row, params.row.role)
                   }}
                 >
                   Restore
@@ -164,7 +186,7 @@ const ListUsers = () => {
                   color="error"
                   variant="contained"
                   onClick={() => {
-                    deleteUser(params.row._id, params.row.role)
+                    deleteUser(params.row, params.row.role)
                   }}
                 >
                   Delete
@@ -196,7 +218,6 @@ const ListUsers = () => {
         initialState={{
           columns: {
             columnVisibilityModel: {
-              deleted: false,
               _id: false,
             },
           },

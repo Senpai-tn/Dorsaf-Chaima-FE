@@ -5,6 +5,8 @@ const initialState = {
   socketId: null,
   alert: null,
   matiere: '',
+  users: [],
+  courses: [],
 }
 
 const reducer = (state = initialState, action) => {
@@ -25,6 +27,12 @@ const reducer = (state = initialState, action) => {
       return { ...state, user: action.user }
     case actions.alert: {
       return { ...state, alert: action.alert }
+    }
+    case actions.getUsers: {
+      return { ...state, users: action.users }
+    }
+    case actions.getCourses: {
+      return { ...state, courses: action.courses }
     }
     case actions.search_cours:
       return { ...state, matiere: action.matiere }
