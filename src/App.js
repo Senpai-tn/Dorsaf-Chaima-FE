@@ -15,6 +15,7 @@ import ReinitPasswd from './Pages/ReinitPasswd/ReinitPasswd'
 import Quiz from './Pages/Etudiant/Quiz/Quiz'
 import { useTranslation } from 'react-i18next'
 import { useEffect } from 'react'
+import Swal from 'sweetalert2'
 
 function App() {
   const { t } = useTranslation(['common'])
@@ -22,6 +23,9 @@ function App() {
   const dispatch = useDispatch()
   useEffect(() => {
     socket.connect()
+    socket.on('achat', (data) => {
+      Swal.fire('Good job!', `${data.cours.title} acheté`, 'success')
+    })
     socket.on('getSocketId', (data) => {
       dispatch({ type: actions.getSocketId, socketId: data.socketId })
       socket.emit('setUser', {

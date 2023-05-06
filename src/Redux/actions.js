@@ -7,5 +7,7 @@ const actions = {
   deleteCours: 'DELETE_COURS',
   search_cours: 'SEARCH_COURS',
   alert: 'ALERT',
+  getUsers: 'GET_USERS',
+  getCourses: 'GET_COURSES',
 }
 export default actions

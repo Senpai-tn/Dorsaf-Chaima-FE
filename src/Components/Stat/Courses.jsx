@@ -9,8 +9,13 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js'
-import { Bar, Pie } from 'react-chartjs-2'
+import { Bar } from 'react-chartjs-2'
 import { Box } from '@mui/material'
+import actions from '../../Redux/actions'
+import { useDispatch, useSelector } from 'react-redux'
+import axios from 'axios'
+import { useEffect } from 'react'
+import dayjs from 'dayjs'
 
 ChartJS.register(
   CategoryScale,
@@ -50,49 +55,63 @@ const labels = [
   'December',
 ]
 
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Achat',
-      data: labels.map(() => Math.random()),
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-    },
-    {
-      label: 'Cours',
-      data: labels.map(() => Math.random()),
-      backgroundColor: 'rgba(53, 162, 235, 0.5)',
-    },
-  ],
-}
-
-export const dataPi = {
-  labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-  datasets: [
-    {
-      label: '# of Votes',
-      data: [12, 19, 3, 5, 2, 3],
-      backgroundColor: [
-        'rgba(255, 99, 132, 0.2)',
-        'rgba(54, 162, 235, 0.2)',
-        'rgba(255, 206, 86, 0.2)',
-        'rgba(75, 192, 192, 0.2)',
-        'rgba(153, 102, 255, 0.2)',
-        'rgba(255, 159, 64, 0.2)',
-      ],
-      borderColor: [
-        'rgba(255, 99, 132, 1)',
-        'rgba(54, 162, 235, 1)',
-        'rgba(255, 206, 86, 1)',
-        'rgba(75, 192, 192, 1)',
-        'rgba(153, 102, 255, 1)',
-        'rgba(255, 159, 64, 1)',
-      ],
-      borderWidth: 1,
-    },
-  ],
-}
 const Courses = () => {
+  const dispatch = useDispatch()
+  const courses = useSelector((state) => state.courses)
+  const getCourses = () => {
+    axios
+      .get(process.env.REACT_APP_URL_BACKEND + 'admin/courses')
+      .then((response) => {
+        dispatch({ type: actions.getCourses, courses: response.data })
+      })
+  }
+
+  const achat = []
+  courses.map((c) => {
+    c.listeAchat.map((a) => {
+      achat.push(a)
+      console.log(dayjs(a.date).year())
+    })
+  })
+
+  console.log('achat', achat)
+
+  const data = {
+    labels,
+    datasets: [
+      {
+        label: 'Cours',
+        data: labels.map(
+          (label, index) =>
+            courses.filter((c) => {
+              return (
+                dayjs(c.createdAt).month() === index &&
+                dayjs(c.createdAt).year() === dayjs(new Date()).year()
+              )
+            }).length
+        ),
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+      },
+      {
+        label: 'Achat',
+        data: labels.map(
+          (label, index) =>
+            achat.filter((a) => {
+              return (
+                dayjs(a.date).month() === index &&
+                dayjs(a.date).year() === dayjs().year()
+              )
+            }).length
+        ),
+        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+      },
+    ],
+  }
+
+  useEffect(() => {
+    getCourses()
+  }, [])
+
   return (
     <Box height={'450px'} m={5} textAlign={'center'}>
       <Bar

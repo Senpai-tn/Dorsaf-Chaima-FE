@@ -60,7 +60,16 @@ const ListCourses = () => {
     { field: '_id', headerName: 'ID' },
     { field: 'price', headerName: 'Price' },
     { field: 'nbView', headerName: 'Views', width: 100 },
-    { field: 'deletedAt', headerName: 'DeletedAt', width: 250 },
+    {
+      field: 'deletedAt',
+      headerName: 'DeletedAt',
+      width: 250,
+      renderCell: (params) => {
+        return params.row.deletedAt !== null
+          ? dayjs(params.row.deletedAt).format('YYYY-MM-DD HH:mm')
+          : ''
+      },
+    },
     {
       field: 'actions',
       headerName: 'Actions',

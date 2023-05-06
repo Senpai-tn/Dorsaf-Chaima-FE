@@ -12,7 +12,11 @@ const Cours = ({ cours }) => {
       width={'250px'}
       height={'300px'}
       position={'relative'}
-      sx={{ border: '2px solid #00000040', borderRadius: '0 0 10px 10px' }}
+      sx={{
+        border: '2px solid #00000040',
+        borderRadius: '0 0 10px 10px',
+        m: '20px',
+      }}
       onClick={() => {
         navigate('/cours', { state: { cours } })
       }}
