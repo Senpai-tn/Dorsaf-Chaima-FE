@@ -9,15 +9,16 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import Button from '../../../Components/Button/Button'
+import { Typography } from '@mui/material'
 function Quiz() {
   var route = useLocation()
   var navigate = useNavigate()
-  const matiere = route.state.matiere
+  const cours = route.state.cours
   const [questions, setQuestion] = useState([])
   const [minutes, setMinutes] = useState(2)
   const [seconds, setSeconds] = useState(0)
   const [submited, setSubmited] = useState(false)
-  const [modalIsOpen, setIsOpen] = useState(false)
   const [message, setMessage] = useState('')
   const [formData, setFormData] = useState([])
   const [answers, setAnswers] = useState([])
@@ -54,23 +55,22 @@ function Quiz() {
     }
   })
 
-  // const Validate = () => {
-  //   dispatch({ type: 'loading', isLoading: true })
-  //   axios
-  //     .post('http://localhost:5000/questions', {
-  //       formData: formData,
-  //       type: offer.type,
-  //       array: array,
-  //       idUser: user._id,
-  //       idOffer: offer._id,
-  //     })
-  //     .then((res) => {
-  //       dispatch({ type: 'loading', isLoading: false })
-  //       dispatch({ type: 'OfferToUpdate', offer: offer })
-  //       setfinalResult(res.data.exam.result)
-  //     })
-  //     .catch((error) => {})
-  // }
+  const Validate = () => {
+    axios
+      .post(process.env.REACT_APP_URL_BACKEND + 'quiz/', {
+        formData: formData,
+        matiere: cours.matiere,
+        array: array,
+        user,
+        cours,
+      })
+      .then((res) => {
+        setQuestion(res.data.exam.questions)
+        setfinalResult(res.data.exam.result)
+        setAnswers(res.data.exam.answers)
+      })
+      .catch((error) => {})
+  }
 
   function afterOpenModal() {
     // references are now sync'd and can be accessed.
@@ -78,9 +78,10 @@ function Quiz() {
 
   useEffect(() => {
     axios
-      .get(process.env.REACT_APP_URL_BACKEND + 'quiz/' + matiere)
+      .get(process.env.REACT_APP_URL_BACKEND + 'quiz/' + cours.matiere)
       .then((res) => {
         setQuestion(res.data.questions)
+        setArray(res.data.array)
       })
       .catch((error) => {
         console.log(error)
@@ -88,13 +89,11 @@ function Quiz() {
     return () => {}
   }, [])
 
-  // const handleClose = () => {
-  //   navigate('/offer', { state: { id: offer._id } })
-  //   setfinalResult(null)
-  // }
   return (
     <div>
-      Quiz {matiere}
+      <Typography textAlign={'center'} fontSize={'35px'} fontWeight={900}>
+        Quiz {cours.matiere}
+      </Typography>
       <div>
         <div
           style={{
@@ -107,19 +106,24 @@ function Quiz() {
         >
           {minutes}:{seconds}
         </div>
-        <div></div>
-        <form id="Quiz">
+
+        <form id="Quiz" style={{ textAlign: 'center', marginTop: '30px' }}>
           {questions.map((question, index) => {
             return (
-              <div key={index}>
+              <div>
                 <h4
                   style={{
-                    backgroundColor:
-                      answers[index] == null
-                        ? 'white'
-                        : answers[index]
-                        ? 'green'
-                        : 'red',
+                    background:
+                      answers.length > 0
+                        ? answers.find((an) => {
+                            return (
+                              an.key * 1 === question.id &&
+                              an.value === question.correctAnswer
+                            )
+                          }) !== undefined
+                          ? 'green'
+                          : 'red'
+                        : '',
                   }}
                 >
                   {question.question}
@@ -146,14 +150,24 @@ function Quiz() {
               </div>
             )
           })}
-          <input
-            type={'button'}
-            value="Submit"
-            onClick={() => {
-              // Validate()
-              setSubmited(true)
-            }}
-          />
+          {submited === false ? (
+            <Button
+              text={'Submit'}
+              onClick={(e) => {
+                e.preventDefault()
+                Validate()
+                setSubmited(true)
+              }}
+              type={'reset'}
+            />
+          ) : (
+            <Typography
+              fontSize={'60px'}
+              color={finalResult > 75 ? 'green' : 'red'}
+            >
+              Your result is : {finalResult} %
+            </Typography>
+          )}
         </form>
       </div>
     </div>

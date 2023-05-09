@@ -303,7 +303,7 @@ const CoursInfo = () => {
                   sx={{ color: 'orange', fontWeight: '700', cursor: 'pointer' }}
                   onClick={() => {
                     navigate('/quiz', {
-                      state: { matiere: route.state.cours.matiere },
+                      state: { cours: route.state.cours },
                     })
                   }}
                 >
