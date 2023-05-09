@@ -131,7 +131,6 @@ const EditProfile = ({ open, handleClose }) => {
                 }) => (
                   <TextField
                     value={value}
-                    type={'number'}
                     onChange={onChange}
                     error={!!error}
                     helperText={error && error.message}

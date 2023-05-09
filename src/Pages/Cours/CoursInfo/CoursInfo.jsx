@@ -304,21 +304,12 @@ const CoursInfo = () => {
                 >
                   {t('button:download')}
                 </a>
-                {/* <Typography
-                  sx={{ color: 'orange', fontWeight: '700', cursor: 'pointer' }}
-                  onClick={() => {
-                    axios.get(
-                      
-                    )
-                  }}
-                >
-                  {t('button:download')}
-                </Typography> */}
+
                 <Typography
                   sx={{ color: 'orange', fontWeight: '700', cursor: 'pointer' }}
                   onClick={() => {
                     navigate('/quiz', {
-                      state: { matiere: route.state.cours.matiere },
+                      state: { cours: route.state.cours },
                     })
                   }}
                 >

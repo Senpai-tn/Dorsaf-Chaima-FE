@@ -31,5 +31,6 @@
   "views": "Views",
   "deletadAt": "DeletadAt",
   "youHavePurchasedThisCourse": "You Have Purchased This Course",
-  "thisCoursIsFree": "this Cours is FREE"
+  "thisCoursIsFree": "this Cours is FREE",
+  "add_cours": "Ajouter Cours"
 }

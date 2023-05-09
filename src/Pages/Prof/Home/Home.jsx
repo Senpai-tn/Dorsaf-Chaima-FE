@@ -4,6 +4,8 @@ import AjoutCours from '../../../Components/AjoutCours/AjoutCours'
 import { useSelector } from 'react-redux'
 import Cours from '../../../Components/Cours/Cours'
 import axios from 'axios'
+import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
 const Home = () => {
   const [openModal, setOpenModal] = useState(false)
@@ -11,7 +13,8 @@ const Home = () => {
   const [cours, setCours] = useState(null)
   const user = useSelector((state) => state.user)
   const matiere = useSelector((state) => state.matiere)
-
+  const { t } = useTranslation(['content'])
+  const navigate = useNavigate()
   return (
     <Box>
       <AjoutCours
@@ -27,6 +30,7 @@ const Home = () => {
       />
 
       <Button
+        sx={{ margin: '12px' }}
         variant="contained"
         color="success"
         onClick={() => {
@@ -34,7 +38,7 @@ const Home = () => {
           setCours(null)
         }}
       >
-        Ajouter Cours
+        {t('add_cours')}
       </Button>
 
       <Stack

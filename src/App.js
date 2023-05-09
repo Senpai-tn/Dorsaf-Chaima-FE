@@ -16,6 +16,7 @@ import Quiz from './Pages/Etudiant/Quiz/Quiz'
 import { useTranslation } from 'react-i18next'
 import { useEffect } from 'react'
 import Swal from 'sweetalert2'
+import Stat from './Pages/Prof/Home/Stat'
 
 function App() {
   const { t } = useTranslation(['common'])
@@ -44,7 +45,10 @@ function App() {
           <Chatbot />
           <Routes>
             {user.role === 'PROF' ? (
-              <Route path="/" element={<HomeProf />} />
+              <>
+                <Route path="/" element={<HomeProf />} />
+                <Route path="/stat" element={<Stat />} />
+              </>
             ) : user.role === 'ETUDIANT' ? (
               <>
                 <Route path="/" element={<HomeEtudiant />} />

@@ -13,15 +13,17 @@ import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt'
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt'
 import EditProfile from './EditProfile'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 const Profile = () => {
   const user = useSelector((state) => state.user)
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
-
+  const { t } = useTranslation(['content'])
   return (
     <Box m={3}>
       <Button
+        sx={{ mx: '15px' }}
         text={'Edit Profile'}
         color={'warning'}
         variant="contained"
@@ -29,6 +31,19 @@ const Profile = () => {
       >
         Edit Profile
       </Button>
+
+      <Button
+        sx={{ mx: '15px' }}
+        text={'Edit Profile'}
+        color={'warning'}
+        variant="contained"
+        onClick={() => {
+          navigate('/stat')
+        }}
+      >
+        {t('stat')}
+      </Button>
+
       <EditProfile open={open} handleClose={() => setOpen(false)} />
       <Box m={10}>
         <Accordion>

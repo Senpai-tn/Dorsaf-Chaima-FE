@@ -1,32 +1,22 @@
-// import React from 'react'
-
-// const Quiz = () => {
-//   return <div>Quiz</div>
-// }
-
-// export default Quiz
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { useLocation } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import Button from '../../../Components/Button/Button'
 import { Typography } from '@mui/material'
+import Swal from 'sweetalert2'
 function Quiz() {
   var route = useLocation()
-  var navigate = useNavigate()
   const cours = route.state.cours
   const [questions, setQuestion] = useState([])
   const [minutes, setMinutes] = useState(2)
   const [seconds, setSeconds] = useState(0)
   const [submited, setSubmited] = useState(false)
-  const [message, setMessage] = useState('')
   const [formData, setFormData] = useState([])
   const [answers, setAnswers] = useState([])
-  const [finalResult, setfinalResult] = useState(null)
+  const [finalResult, setfinalResult] = useState(0)
   const [array, setArray] = useState([0])
   var user = useSelector((state) => state.user)
-  var isLoading = useSelector((state) => state.isLoading)
-  const dispatch = useDispatch()
 
   const handleChange = (e) => {
     var answer = { key: e.target.name, value: e.target.value.trim() }
@@ -41,7 +31,8 @@ function Quiz() {
         }
         if (seconds === 0) {
           if (minutes === 0) {
-            setMessage('Time out')
+            setSubmited(true)
+            Swal.fire('Time out', '', 'error')
             clearInterval(myInterval)
           } else {
             setMinutes(minutes - 1)
@@ -70,10 +61,6 @@ function Quiz() {
         setAnswers(res.data.exam.answers)
       })
       .catch((error) => {})
-  }
-
-  function afterOpenModal() {
-    // references are now sync'd and can be accessed.
   }
 
   useEffect(() => {

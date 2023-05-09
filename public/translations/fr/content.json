@@ -31,5 +31,6 @@
   "views": "nombres de vue",
   "deletadAt": "supprimé à",
   "youHavePurchasedThisCourse": "Vous Avez Achter Ce Cours",
-  "thisCoursIsFree": "ce Cours est GRATUIT"
+  "thisCoursIsFree": "ce Cours est GRATUIT",
+  "add_cours": "Ajouter Cours"
 }
