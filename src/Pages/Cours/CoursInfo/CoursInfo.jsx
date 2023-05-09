@@ -287,23 +287,38 @@ const CoursInfo = () => {
           >
             {checkAchat() && (
               <>
-                <Typography
+                <a
+                  style={{
+                    textDecoration: 'none',
+                    color: 'orange',
+                    fontSize: '1rem',
+                    fontWeight: 700,
+                    fontFamily: 'Roboto,Helvetica,Arial",sans-serif',
+                  }}
+                  target="_blank"
+                  href={
+                    process.env.REACT_APP_URL_BACKEND +
+                    'pdf/' +
+                    route.state.cours.coursFile
+                  }
+                >
+                  {t('button:download')}
+                </a>
+                {/* <Typography
                   sx={{ color: 'orange', fontWeight: '700', cursor: 'pointer' }}
                   onClick={() => {
                     axios.get(
-                      process.env.REACT_APP_URL_BACKEND +
-                        'pdf/' +
-                        route.state.cours.coursFile
+                      
                     )
                   }}
                 >
                   {t('button:download')}
-                </Typography>
+                </Typography> */}
                 <Typography
                   sx={{ color: 'orange', fontWeight: '700', cursor: 'pointer' }}
                   onClick={() => {
                     navigate('/quiz', {
-                      state: { cours: route.state.cours },
+                      state: { matiere: route.state.cours.matiere },
                     })
                   }}
                 >
